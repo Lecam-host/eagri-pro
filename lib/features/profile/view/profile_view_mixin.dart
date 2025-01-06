@@ -53,7 +53,7 @@ mixin ProfileViewMixin on State<ProfileView> {
       if (context.canPop()) {
         context.pop();
       } else {
-        context.go(Routes.navigation.path);
+        context.go(Routes.home.path);
       }
     } else if (state is UpdateUserFailed) {
       profileBloc.add(SetUser(user: validateSuccess.user));

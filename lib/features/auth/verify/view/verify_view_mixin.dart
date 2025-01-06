@@ -46,7 +46,7 @@ mixin VerifyViewMixin on State<VerifyView> {
       }
     } else if (registerState is ForgotPasswordCheckSuccess) {
       if (registerState.verificationCode.toString() == _verificationCodeTextEditingController.text) {
-        context.go(Routes.update_password.path);
+        context.go(Routes.updatePassword.path);
       } else if (_verificationCodeTextEditingController.text.isNotEmpty) {
         _onWrongCode();
       } else {

@@ -173,8 +173,9 @@ class _ImageDialogState extends State<ImageDialog>
                                                         color: CupertinoColors
                                                             .white),
                                                     onPressed: () {
-                                                      if (context.canPop())
+                                                      if (context.canPop()) {
                                                         context.pop();
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -229,13 +230,15 @@ class _ImageDialogState extends State<ImageDialog>
                                                                   file);
                                                         });
                                                         if (context.mounted) {
-                                                          if (context.canPop())
+                                                          if (context.canPop()) {
                                                             context.pop();
+                                                          }
                                                         }
                                                       } catch (e) {
                                                         if (context.mounted) {
-                                                          if (context.canPop())
+                                                          if (context.canPop()) {
                                                             context.pop();
+                                                          }
                                                           AppHelper
                                                               .showErrorMessage(
                                                             context: context,
@@ -287,13 +290,15 @@ class _ImageDialogState extends State<ImageDialog>
                                                                   file);
                                                         });
                                                         if (context.mounted) {
-                                                          if (context.canPop())
+                                                          if (context.canPop()) {
                                                             context.pop();
+                                                          }
                                                         }
                                                       } catch (e) {
                                                         if (context.mounted) {
-                                                          if (context.canPop())
+                                                          if (context.canPop()) {
                                                             context.pop();
+                                                          }
                                                           AppHelper
                                                               .showErrorMessage(
                                                             context: context,

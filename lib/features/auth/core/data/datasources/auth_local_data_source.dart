@@ -1,13 +1,14 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../core/error/exception.dart';
-import '../../../core/storage/secure_storage_manager.dart';
-import '../../../core/storage/storage_constant.dart';
-import '../../profile/model/user_model.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/storage/secure_storage_manager.dart';
+import '../../../../../core/storage/storage_constant.dart';
+import '../models/auth_model.dart';
+
 
 abstract class AuthLocalDataSource {
-  Future<UserModel?> loadData();
-  Future<void> saveData(UserModel value);
+  Future<AuthModel?> loadData();
+  Future<void> saveData(AuthModel value);
   Future<void> deleteData();
 }
 
@@ -16,21 +17,21 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   AuthLocalDataSourceImpl({required this.sharedPreferences});
   @override
   Future<void> deleteData() {
-    final local = SecureStorageData<UserModel>(
+    final local = SecureStorageData<AuthModel>(
       StorageConstant.AUTH_CACHED,
       sharedPreferences,
-      fromJson: UserModel.fromMap,
+      fromJson: AuthModel.fromJson,
       toJson: (data) => data.toJson(),
     );
     return local.clearData();
   }
 
   @override
-  Future<UserModel?> loadData() async {
-    final local = SecureStorageData<UserModel>(
+  Future<AuthModel?> loadData() async {
+     final local = SecureStorageData<AuthModel>(
       StorageConstant.AUTH_CACHED,
       sharedPreferences,
-      fromJson: UserModel.fromMap,
+      fromJson: AuthModel.fromJson,
       toJson: (data) => data.toJson(),
     );
 
@@ -42,11 +43,11 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<void> saveData(UserModel value) async {
-    final local = SecureStorageData<UserModel>(
+  Future<void> saveData(AuthModel value) async {
+    final local = SecureStorageData<AuthModel>(
       StorageConstant.AUTH_CACHED,
       sharedPreferences,
-      fromJson: UserModel.fromMap,
+      fromJson: AuthModel.fromJson,
       toJson: (data) => data.toJson(),
     );
 

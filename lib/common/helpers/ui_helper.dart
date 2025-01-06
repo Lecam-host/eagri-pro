@@ -14,4 +14,15 @@ class UIHelper {
   static double get deviceWidth => _deviceWidth;
   static double get deviceHeight => _deviceHeight;
   static BorderRadiusGeometry get borderRadius => _borderRadius;
+
+  static showSnackBar({
+    required BuildContext context,
+    required String content,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content),
+      ),
+    );
+  }
 }

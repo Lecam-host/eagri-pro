@@ -7,21 +7,14 @@ mixin SplashViewMixin on State<SplashView> {
     final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
     String? authToken = await _userService.getAuthTokenFromSP();
 
-    if (authToken == null) {
+    if (authToken == null && !loginBloc.state.isAuthenticated) {
       loginBloc.add(const LogoutButtonPressed());
       if (context.mounted) {
-        // context.go(Routes.login.path); // Open this comment line
+        context.go(Routes.login.path);
       }
-    } else {
-      loginBloc.add(ValidateAuthToken(authToken: authToken));
+    } else if (loginBloc.state.isAuthenticated) {
+      context.go(Routes.home.path);
     }
-
-    // TODO: When you create the user authentication service, delete the code block below that directs to the NavigationView page and open the comment lines above.
-    // Remove this Future.delayed() function. This was added for testing purposes to direct you to the home page instead of the direct login screen when you first launch the project.
-    Future.delayed(Duration.zero, () async {
-      if (context.mounted) context.go(Routes.onBoarding.path);
-    });
-
     return true;
   }
 
@@ -42,7 +35,7 @@ mixin SplashViewMixin on State<SplashView> {
       registerBloc.add(const ClearRegisterData());
       context.go(Routes.login.path);
       _checkValues(state.user)
-          ? context.go(Routes.navigation.path)
+          ? context.go(Routes.home.path)
           : context.go(Routes.profile.path);
     } else if (state is ValidateFailed) {
       loginBloc.add(const LogoutButtonPressed());

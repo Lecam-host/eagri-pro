@@ -1,3 +1,4 @@
+import 'package:eagri_pro/features/auth/core/domain/usecases/login_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/models/http_response_model.dart';
@@ -8,8 +9,9 @@ import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserService userService;
+  final LoginUsecase loginUsecase;
 
-  LoginBloc({required this.userService}) : super(const LoginState()) {
+  LoginBloc({required this.userService, required this.loginUsecase}) : super(const LoginState()) {
     on<LoginButtonPressed>((event, emit) async {
       emit(const LoginState(isLoading: true));
       try {

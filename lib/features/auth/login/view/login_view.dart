@@ -1,9 +1,13 @@
+import 'dart:developer';
+
+import 'package:eagri_pro/common/components/button_custom.dart';
+import 'package:eagri_pro/features/auth/components/custom_header.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../common/components/custom_text_field.dart';
 import '../../../../common/helpers/app_helper.dart';
 import '../../../../core/constants/color_constants.dart';
@@ -39,9 +43,12 @@ class _LoginViewState extends State<LoginView> with LoginViewMixin {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
-          return Scaffold(
-            body: SingleChildScrollView(
-              child: SafeArea(
+          return SafeArea(
+            top: false,
+            bottom: false,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              body: SingleChildScrollView(
                 child: BlocListener<LoginBloc, LoginState>(
                   listener: (context, state) {
                     _listener(state);
@@ -49,80 +56,123 @@ class _LoginViewState extends State<LoginView> with LoginViewMixin {
                   child: BlocBuilder<LoginBloc, LoginState>(
                     builder: (context, state) {
                       return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          AuthHeaderWidget(
+                          HeaderCustom(
                             title: LocaleKeys.login.tr(),
-                            subtitle: LocaleKeys.connect_your_account.tr(),
-                            showBackButton: false,
+                            description: LocaleKeys.connect_your_account.tr(),
+                            // subtitle: "Connectez-vous à votre compte",
                           ),
-                          // SizedBox(height: constraints.maxHeight * 0.1),
-
+                          // AuthHeaderWidget(
+                          //   title: LocaleKeys.login.tr(),
+                          //   subtitle: LocaleKeys.connect_your_account.tr(),
+                          //   showBackButton: false,
+                          // ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(children: [
-                              const SizedBox(height: 40),
-                              CustomTextField(
-                                textEditingController:
-                                    _emailTextEditingController,
-                                enabled: !state.isLoading,
-                                placeholder: LocaleKeys.email.tr(),
-                                prefixIcon: CupertinoIcons.mail,
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                              const SizedBox(height: 20),
-                              CustomTextField(
-                                textEditingController:
-                                    _passwordTextEditingController,
-                                placeholder: LocaleKeys.password.tr(),
-                                textInputAction: TextInputAction.done,
-                                enabled: !state.isLoading,
-                                onSubmitted: (value) {
-                                  _submit(loginBloc);
-                                },
-                                suffix: CupertinoButton(
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    _showForgotPasswordModalPopup();
-                                  },
-                                  child: Icon(
-                                    CupertinoIcons.question_circle,
-                                    color: themeState.isDark
-                                        ? ColorConstants.darkSecondaryIcon
-                                        : ColorConstants.lightSecondaryIcon,
-                                  ),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 20,
+                              children: [
+                                const SizedBox(height: 30),
+                                TextFieldCustom(
+                                    label: "Numéro de téléphone",
+                                    controller: _emailTextEditingController,
+                                    hintText:
+                                        "Entrez votre numéro de téléphone",
+                                    prefixIcon: const Icon(Icons.phone)),
+                                TextFieldCustom(
+                                    label: "Mot de passe",
+                                    hintText: "Entrez votre mot de passe",
+                                    controller: _passwordTextEditingController,
+                                    prefixIcon: const Icon(Icons.phone)),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  // heightFactor: 0,
+                                  child: TextButton(
+                                      onPressed: () {
+                                        log("Forgot password");
+                                        context.pushNamed(
+                                            Routes.forgotPassword.path);
+                                      },
+                                      child:
+                                          const Text("Mot de passe oublié ?")),
                                 ),
-                                obscureText: true,
-                                prefixIcon: CupertinoIcons.lock,
-                              ),
-                              const SizedBox(height: 20),
-                              LoginButton(
-                                isLoading: state.isLoading,
-                                onPressed: () {
-                                  context.go(Routes.navigation.path);
-
-                                  // _submit(loginBloc);
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              TextButton(
-                                onPressed: () {
-                                  context.push(Routes.verify.path);
-                                },
-                                child: Text(
-                                  LocaleKeys.forgot_password.tr(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                        color: themeState.isDark
-                                            ? ColorConstants.lightBackground
-                                            : ColorConstants.darkSecondaryIcon,
-                                      ),
-                                ),
-                              ),
-                              const PushToRegisterButton()
-                            ]),
+                                ButtonCustom(
+                                    label: "Connexion",
+                                    onPressed: () =>
+                                        context.go(Routes.home.path))
+                              ],
+                            ),
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   child: Column(children: [
+                          //     const SizedBox(height: 40),
+                          //     CustomTextField(
+                          //       textEditingController:
+                          //           _emailTextEditingController,
+                          //       enabled: !state.isLoading,
+                          //       placeholder: LocaleKeys.email.tr(),
+                          //       prefixIcon: CupertinoIcons.mail,
+                          //       keyboardType: TextInputType.emailAddress,
+                          //     ),
+                          //     const SizedBox(height: 20),
+                          //     CustomTextField(
+                          //       textEditingController:
+                          //           _passwordTextEditingController,
+                          //       placeholder: LocaleKeys.password.tr(),
+                          //       textInputAction: TextInputAction.done,
+                          //       enabled: !state.isLoading,
+                          //       onSubmitted: (value) {
+                          //         _submit(loginBloc);
+                          //       },
+                          //       suffix: CupertinoButton(
+                          //         padding: EdgeInsets.zero,
+                          //         onPressed: () {
+                          //           _showForgotPasswordModalPopup();
+                          //         },
+                          //         child: Icon(
+                          //           CupertinoIcons.question_circle,
+                          //           color: themeState.isDark
+                          //               ? ColorConstants.darkSecondaryIcon
+                          //               : ColorConstants.lightSecondaryIcon,
+                          //         ),
+                          //       ),
+                          //       obscureText: true,
+                          //       prefixIcon: CupertinoIcons.lock,
+                          //     ),
+                          //     const SizedBox(height: 20),
+                          //     LoginButton(
+                          //       isLoading: state.isLoading,
+                          //       onPressed: () {
+                          //         context.go(Routes.navigation.path);
+
+                          //         // _submit(loginBloc);
+                          //       },
+                          //     ),
+                          //     const SizedBox(height: 10),
+                          //     TextButton(
+                          //       onPressed: () {
+                          //         context.push(Routes.verify.path);
+                          //       },
+                          //       child: Text(
+                          //         LocaleKeys.forgot_password.tr(),
+                          //         style: Theme.of(context)
+                          //             .textTheme
+                          //             .bodyMedium!
+                          //             .copyWith(
+                          //               color: themeState.isDark
+                          //                   ? ColorConstants.lightBackground
+                          //                   : ColorConstants.darkSecondaryIcon,
+                          //             ),
+                          //       ),
+                          //     ),
+                          //     const PushToRegisterButton()
+                          //   ]),
+                          // ),
                           //  const TitleWidget(),
                         ],
                       );

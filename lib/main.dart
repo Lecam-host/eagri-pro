@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:eagri_pro/firebase_options.dart';
-
 import 'common/helpers/ui_helper.dart';
 import 'core/services/shared_preferences_service.dart';
 import 'core/services/theme_service.dart';
@@ -56,16 +55,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     UIHelper.initialize(context);
-    return BlocBuilder<ThemeBloc, ThemeState>(builder: (context, themeState) {
-      return MaterialApp.router(
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        title: 'Template App',
-        theme: ThemeService.buildTheme(themeState),
-        debugShowCheckedModeBanner: false,
-        routerConfig: RouterManager.router,
-      );
-    });
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        return MaterialApp.router(
+          restorationScopeId: 'app',
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          title: 'Eagri Pro',
+          theme: ThemeService.buildTheme(themeState),
+          debugShowCheckedModeBanner: false,
+          routerConfig: RouterManager.router,
+        );
+      },
+    );
   }
 }

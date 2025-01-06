@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 
 class ColorConstants {
   static Color darkBackground = const Color(0xFF1A1B1E);
+  static Color primaryColor = const Color(0xFF045B27);
+  static Color secondaryColor = const Color(0xFF1E1E1E);
   static Color lightBackground = const Color(0xFFf2f2f7);
+  static const Color grayScale100 = Color.fromARGB(15, 4, 91, 39);
 
   static Color darkItem = const Color(0xFF1c1c1e);
   static Color lightItem = const Color(0xFFffffff);
@@ -27,5 +30,5 @@ class ColorConstants {
 
   static Color darkBackgroundColorContainer = const Color(0xFF2A2B2E);
 
-  static Color blueColor = const Color.fromRGBO(33, 150, 243, 1);
+  static Color blueColor = const Color.fromARGB(255, 0, 76, 138);
 }

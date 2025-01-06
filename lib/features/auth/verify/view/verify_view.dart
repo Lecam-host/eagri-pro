@@ -102,7 +102,7 @@ class _VerifyViewState extends State<VerifyView> with VerifyViewMixin {
                                 _verificationCodeTextEditingController,
                             onPressed: () async {
                               context
-                                  .pushReplacement(Routes.update_password.path);
+                                  .pushReplacement(Routes.updatePassword.path);
                               // await _register(
                               //     registerState: registerState,
                               //     registerBloc: registerBloc);

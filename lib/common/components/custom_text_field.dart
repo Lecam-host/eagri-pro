@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/color_constants.dart';
 import '../../features/theme/bloc/theme_bloc.dart';
@@ -126,6 +128,143 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ],
         );
       },
+    );
+  }
+}
+
+class TextFieldCustom extends StatelessWidget {
+  final String label;
+  final String hintText;
+  final bool obscureText;
+  final bool readOnly;
+  final String? name;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final Function(String)? onChanged;
+  final bool? withBorder;
+  final TextInputType? keyboardType;
+  final Function(String)? onSubmitted;
+  final TextEditingController? controller;
+  final List<TextInputFormatter>? inputFormatters;
+  final VoidCallback? onTap;
+  final bool? requiredField;
+  final int? maxLines;
+  final Color? textColor;
+  final Function(Object?)? validators;
+
+  const TextFieldCustom({
+    super.key,
+    required this.label,
+    this.keyboardType,
+    required this.hintText,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.name = "name",
+    this.onChanged,
+    this.prefixIcon,
+    this.onTap,
+    this.suffixIcon,
+    this.maxLines = 1,
+    this.controller,
+    this.inputFormatters,
+    this.withBorder = true,
+    this.requiredField = false,
+    this.validators,
+    this.textColor,
+    this.onSubmitted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: FormBuilderField(
+        name: name!,
+        validator: (value) {
+          if (validators != null) {
+            return validators!(value.toString());
+          }
+          if (requiredField! && value == null) {
+            return "Ce champ est obligatoire";
+          }
+          return null;
+        },
+        builder: (FormFieldState<dynamic> state) {
+          return TextFormField(
+            readOnly: readOnly,
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            maxLines: maxLines,
+            decoration: InputDecoration(
+              label: Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              hintText: hintText,
+              hintStyle: const TextStyle(color: Colors.grey),
+              // prefixIcon: prefixIcon,
+              // suffixIcon: suffixIcon,
+              border: withBorder!
+                  ? OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
+                  : InputBorder.none,
+              contentPadding: const EdgeInsets.only(
+                left: 20.0,
+                right: 15.0,
+                top: 18.0,
+                bottom: 18.0,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                    width: 1.5, color: ColorConstants.lightTextField),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide:
+                    BorderSide(width: 1.5, color: ColorConstants.primaryColor),
+              ),
+            ),
+            onTap: onTap,
+            onSaved: (value) {
+              state.didChange(value);
+              if (onChanged != null) {
+                onChanged!(value!);
+              }
+            },
+            onChanged: (value) {
+              state.didChange(value);
+              if (onChanged != null) {
+                onChanged!(value);
+              }
+            },
+            onFieldSubmitted: (value) {
+              state.didChange(value);
+              if (onSubmitted != null) {
+                onSubmitted!(value);
+              }
+            },
+            inputFormatters: inputFormatters,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: textColor ?? Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+            validator: (value) {
+              state.save();
+              if (validators != null) {
+                return validators!(value.toString());
+              }
+              if (requiredField! && (value == null || value.isEmpty)) {
+                return "Ce champ est obligatoire";
+              }
+              return null;
+            },
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          );
+        },
+      ),
     );
   }
 }

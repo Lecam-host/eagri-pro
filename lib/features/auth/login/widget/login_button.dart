@@ -22,9 +22,7 @@ class LoginButton extends StatelessWidget {
         return SizedBox(
           width: UIHelper.deviceWidth,
           child: CupertinoButton(
-            color: themeState.isDark
-                ? ColorConstants.darkPrimaryIcon
-                : ColorConstants.lightPrimaryIcon,
+            color: ColorConstants.primaryColor,
             onPressed: isLoading ? null : onPressed,
             borderRadius: const BorderRadius.all(
                 Radius.circular(AppConstants.borderRadius)),

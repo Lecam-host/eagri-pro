@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,7 +25,7 @@ class AuthHeaderWidget extends StatelessWidget {
       return Container(
         height: UIHelper.deviceHeight * 0.3,
         width: UIHelper.deviceWidth,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
         decoration: BoxDecoration(
           color: themeState.isDark
               ? ColorConstants.darkPrimaryIcon

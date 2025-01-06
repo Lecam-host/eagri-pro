@@ -1,8 +1,8 @@
+import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../features/theme/bloc/theme_bloc.dart';
 import '../../features/theme/bloc/theme_event.dart';
 import '../../features/theme/bloc/theme_state.dart';
@@ -54,13 +54,29 @@ class ThemeService {
 
   static ThemeData buildTheme(ThemeState state) {
     return ThemeData(
-        // brightness: Brightness.light,
         brightness: state.isDark ? Brightness.dark : Brightness.light,
-        primaryColor: state.isDark ? Colors.black : Colors.white,
+        primaryColor: ColorConstants.primaryColor,
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: CupertinoDynamicColor.withBrightness(
             color: lightColor,
             darkColor: darkColor,
+          ),
+        ),
+        colorScheme: ColorScheme.light().copyWith(
+          primary: ColorConstants.primaryColor,
+          secondary: ColorConstants.secondaryColor,
+          onPrimary: Colors.white,
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            textStyle: WidgetStateProperty.all(
+              TextStyle(
+                fontFamily: fontFamily,
+                color: ColorConstants.primaryColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ),
         textTheme: TextTheme(
@@ -75,7 +91,7 @@ class ThemeService {
           ),
           labelMedium: TextStyle(
             fontSize: 14,
-            //fontFamily: fontFamily,
+            fontFamily: fontFamilySecond,
             color: CupertinoDynamicColor.withBrightness(
               color: lightColor,
               darkColor: darkColor,
@@ -285,6 +301,7 @@ class ThemeService {
   }
 }
 
-String fontFamily = "Mulish";
+String fontFamily = "BwGradual";
+String fontFamilySecond = "Inter";
 Color lightColor = CupertinoColors.black;
 Color darkColor = CupertinoColors.white;

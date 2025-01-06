@@ -21,7 +21,7 @@ class CustomMultiBlocProvider extends StatelessWidget {
       providers: [
         BlocProvider(
             create: (context) =>
-                LoginBloc(userService: UserService(di(), di()))),
+                LoginBloc(userService: UserService(di(), di()), loginUsecase: di())),
         BlocProvider(
             create: (context) =>
                 RegisterBloc(userService: UserService(di(), di()))),

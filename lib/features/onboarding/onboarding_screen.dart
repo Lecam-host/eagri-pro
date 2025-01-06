@@ -92,20 +92,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               contents[i].title,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontWeight: FontWeight.w600,
-                                fontSize: (width <= 550) ? 30 : 35,
+                                fontSize: (width <= 550) ? 20 : 30,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 15),
                             Text(
                               contents[i].desc,
-                              style: TextStyle(
-                                fontFamily: "Mulish",
-                                fontWeight: FontWeight.w300,
-                                fontSize: (width <= 550) ? 17 : 25,
-                              ),
                               textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: (width <= 550) ? 13 : 17,
+                                color: themeState.isDark
+                                    ? ColorConstants.lightBackground
+                                    : ColorConstants.darkBackground,
+                              ),
                             )
                           ],
                         ),

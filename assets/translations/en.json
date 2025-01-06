@@ -1,0 +1,19 @@
+{
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "home": "Home",
+    "my_orders": "My Orders",
+    "last_orders": "Last Orders",
+    "connect_your_account": "Connect your account",
+    "settings": "Settings",
+    "profile": "Profile",
+    "language": "Language",
+    "notifications": "Notifications",
+    "see_all": "See All",
+    "help": "Help",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
+}

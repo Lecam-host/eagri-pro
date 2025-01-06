@@ -1,84 +1,122 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/generated/locale_keys.g.dart';
 import 'package:eagri_pro/features/home/view/home_view.dart';
 import 'package:eagri_pro/features/settings/view/settings_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/utils/router/routes.dart';
 
 class NavigationView extends StatefulWidget {
-  const NavigationView({super.key});
+  final Widget child;
+
+  const NavigationView({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
 
   @override
   State<NavigationView> createState() => _NavigationViewState();
 }
 
 class _NavigationViewState extends State<NavigationView> {
-  late CupertinoTabController tabController;
+  late CupertinoTabController _tabController;
+
+  int _getCurrentIndex(BuildContext context) {
+    final location =
+        GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+    if (location.startsWith(Routes.home.path)) return 0;
+    if (location.startsWith(Routes.orders.path)) return 1;
+    if (location.startsWith(Routes.settings.path)) return 2;
+    return 0;
+  }
 
   @override
   void initState() {
-    tabController = CupertinoTabController();
     super.initState();
+    _tabController = CupertinoTabController();
   }
 
   @override
   void dispose() {
-    tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = _getCurrentIndex(context);
+
     return CupertinoTabScaffold(
-      controller: tabController,
+      controller: _tabController..index = currentIndex,
       tabBar: CupertinoTabBar(
-        border: const Border(),
-        currentIndex: 0,
-        backgroundColor: Colors.transparent,
-        activeColor: CupertinoDynamicColor.withBrightness(
-          color: ColorConstants.lightPrimaryIcon,
-          darkColor: ColorConstants.darkPrimaryIcon,
-        ),
-        inactiveColor: CupertinoDynamicColor.withBrightness(
-          color: ColorConstants.lightInactive,
-          darkColor: ColorConstants.darkInactive,
-        ),
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.shopping_bag_outlined),
+            icon: SvgPicture.asset(
+              'assets/icons/navigations/home.svg',
+              colorFilter: ColorFilter.mode(
+                currentIndex == 0
+                    ? ColorConstants.primaryColor
+                    : ColorConstants.darkBackground,
+                BlendMode.srcIn,
+              ),
+            ),
             label: LocaleKeys.home.tr(),
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.receipt_long),
-            label: LocaleKeys.payments.tr(),
+            icon: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: currentIndex == 1
+                    ? ColorConstants.primaryColor.withOpacity(0.1)
+                    : Colors.transparent,
+              ),
+              child: SvgPicture.asset(
+                'assets/icons/navigations/order.svg',
+                colorFilter: ColorFilter.mode(
+                  currentIndex == 1
+                      ? ColorConstants.primaryColor
+                      : ColorConstants.darkBackground,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            label: LocaleKeys.my_orders.tr(),
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
+            icon: SvgPicture.asset(
+              'assets/icons/navigations/account.svg',
+              colorFilter: ColorFilter.mode(
+                currentIndex == 2
+                    ? ColorConstants.primaryColor
+                    : ColorConstants.darkBackground,
+                BlendMode.srcIn,
+              ),
+            ),
             label: LocaleKeys.settings.tr(),
           ),
         ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go(Routes.notifications.path);
+              break;
+            case 1:
+              context.go(Routes.orders.path);
+              break;
+            case 2:
+              context.go(Routes.settings.path);
+              break;
+          }
+        },
       ),
       tabBuilder: (context, index) {
-        switch (index) {
-          case 0:
-            return CupertinoTabView(
-              builder: (context) {
-                return const HomeView();
-              },
-            );
-
-          case 1:
-            return CupertinoTabView(
-              builder: (context) {
-                return const SettingsView();
-              },
-            );
-
-          default:
-            tabController.index = 0;
-            return const HomeView();
-        }
+        return CupertinoTabView(
+          builder: (context) => widget.child,
+        );
       },
     );
   }

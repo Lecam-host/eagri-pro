@@ -1,11 +1,8 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eagri_pro/features/auth/register/bloc/register_event.dart';
 import 'package:eagri_pro/features/auth/register/bloc/register_state.dart';
-import 'package:eagri_pro/generated/locale_keys.g.dart';
 import 'package:eagri_pro/core/models/http_response_model.dart';
 import 'package:eagri_pro/features/profile/model/user_model.dart';
-import 'package:eagri_pro/core/services/firebase_service.dart';
 import 'package:eagri_pro/features/profile/service/user_service.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {

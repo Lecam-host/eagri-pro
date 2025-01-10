@@ -4,6 +4,7 @@ import 'package:eagri_pro/features/auth/data/models/user_model.dart';
 import 'package:eagri_pro/features/auth/domain/entities/auth_entity.dart';
 import 'package:eagri_pro/features/order/cubit/order_cubit.dart';
 import 'package:eagri_pro/features/order/data/models/delivery_model.dart';
+import 'package:eagri_pro/features/order/data/models/order_delivery_model.dart';
 import 'package:eagri_pro/features/order/data/models/order_model.dart';
 import 'package:eagri_pro/features/order/views/details_order_view.dart';
 import 'package:eagri_pro/features/order/views/order_view.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../auth/bloc/login/auth_bloc.dart';
 import '../../auth/domain/entities/user_entity.dart';
+import '../data/models/params/get_order_delivery_by_qr_params.dart';
 import '../data/models/validate_delivery_params.dart';
 import '../domain/usecases/get_delivery_by_id_usecase.dart';
 
@@ -154,7 +156,7 @@ mixin OrderMixin on State<OrderView> {
 // }
 
 mixin OrderDetailsMixin on State<DetailsOrderView> {
-  List<DeliveryModel>? delivery;
+  OrderDeliveryModel? delivery;
   OrderModel? orderSelected;
   bool loadingValidatedDelivery = false;
   bool itemValided = false;
@@ -172,29 +174,29 @@ mixin OrderDetailsMixin on State<DetailsOrderView> {
     user = context.read<AuthBloc>().state.account;
     orderSelected = context.read<OrderCubit>().state.orderSelected;
     if (auth != null) {
-      getDelivery(GetDeliveryByIdUsecaseParams(
-          code: widget.id, supplier: auth!.organismAccountId!));
+      getDelivery(GetOrderDeliveryByQrParams(
+          qrCode: widget.id, supplierId: auth!.organismAccountId!));
     }
   }
 
-  getDelivery(GetDeliveryByIdUsecaseParams params) async {
-    delivery = await context.read<OrderCubit>().getDeliveryById(params);
-    setState(() {
-      loading = false;
-    });
+  getDelivery(GetOrderDeliveryByQrParams params) async {
+    delivery =
+        await context.read<OrderCubit>().getOrderDeliveryByQrCode(params);
+    setState(() {});
   }
 
-  Future<bool>validate() async {
-    setState(() {
-      loading = true;
-    });
-    itemValided = await context.read<OrderCubit>().validateDelivery(ValidateDeliveryParams(
-        itemId: delivery![0].id,
-        agentId: user!.user.account.id,
-        pinCode: code.text));
-    setState(() {
-      loading = false;
-    });
+  Future<bool> validate() async {
+    itemValided = await context.read<OrderCubit>().validateDelivery(
+        ValidateDeliveryParams(
+            deliveryId: delivery!.delivery.id,
+            agentId: user!.user.account.id,
+            supplierId: auth!.organismAccountId!,
+            pinCode: code.text));
+    if (itemValided) {
+      context.read<OrderCubit>().getOrderDeliveryByQrCode(
+          GetOrderDeliveryByQrParams(
+              qrCode: widget.id, supplierId: auth!.organismAccountId!));
+    }
     return itemValided;
   }
 }

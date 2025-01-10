@@ -1,14 +1,13 @@
 import 'package:eagri_pro/common/components/tag_custom.dart';
-import 'package:eagri_pro/features/auth/bloc/login/auth_bloc.dart';
 import 'package:eagri_pro/features/order/cubit/order_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/enum.dart';
 import '../../../core/utils/router/routes.dart';
 import '../../../generated/locale_keys.g.dart';
+import '../../auth/bloc/login/auth_bloc.dart';
 import '../../auth/domain/entities/auth_entity.dart';
 import '../data/models/order_model.dart';
 
@@ -107,13 +106,13 @@ class ItemOrder extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "# ${order.invoiceNumber}",
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
+                        Text("# ${order.invoiceNumber}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                  fontWeight: FontWeight.w600,
+                                )),
                         const SizedBox(height: 4),
                         Text(
                           order.customer.name,

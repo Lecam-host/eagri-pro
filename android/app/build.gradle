@@ -11,12 +11,13 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility  = JavaVersion.VERSION_17
+        targetCompatibility  = JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "17"
     }
 
     defaultConfig {
@@ -38,7 +39,11 @@ android {
         }
     }
 }
-
+dependencies {
+    // Autres dépendances...
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
 flutter {
     source = "../.."
 }

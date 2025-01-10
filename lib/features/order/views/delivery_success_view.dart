@@ -36,9 +36,10 @@ class DeliverySuccessView extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'La livraison de la commande #$orderId a été validée avec succès.',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),

@@ -25,6 +25,7 @@ import 'features/order/data/datasources/order_remote_data_source.dart';
 import 'features/order/data/repositories/order_repository_impl.dart';
 import 'features/order/domain/repositories/order_repository.dart';
 import 'features/order/domain/usecases/get_delivery_by_id_usecase.dart';
+import 'features/order/domain/usecases/get_order_delivery_by_qr_usecase.dart';
 import 'features/order/domain/usecases/validate_delivery_usecase.dart';
 import 'features/profile/data/datasoucres/account_local_data_source.dart';
 import 'features/profile/data/datasoucres/account_remote_datasource.dart';
@@ -116,6 +117,7 @@ Future<void> configureDependencies() async {
   di.registerLazySingleton(() => GetOrdersUsecase(orderRepository: di()));
   di.registerLazySingleton(() => GetDeliveryByIdUsecase(orderRepository: di()));
   di.registerLazySingleton(() => ValidateDeliveryUsecase(orderRepository: di()));
-  di.registerLazySingleton(() => OrderCubit(getOrdersUsecase: di(), getDeliveryByIdUsecase: di(), validateDeliveryUsecase: di()));
+  di.registerLazySingleton(() => GetOrderDeliveryByQrUsecase(orderRepository: di()));
+  di.registerLazySingleton(() => OrderCubit(getOrdersUsecase: di(), getDeliveryByIdUsecase: di(), validateDeliveryUsecase: di(), getOrderDeliveryByQrUsecase: di()));
   
 }

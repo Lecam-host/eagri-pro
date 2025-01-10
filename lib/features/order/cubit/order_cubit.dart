@@ -1,3 +1,4 @@
+import 'package:eagri_pro/features/order/domain/usecases/get_order_delivery_by_qr_usecase.dart';
 import 'package:eagri_pro/features/order/domain/usecases/validate_delivery_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:eagri_pro/core/utils/enum.dart';
@@ -6,7 +7,9 @@ import 'package:eagri_pro/features/order/domain/usecases/get_delivery_by_id_usec
 import 'package:eagri_pro/features/order/domain/usecases/get_orders_usecase.dart';
 import 'package:equatable/equatable.dart';
 import '../data/models/delivery_model.dart';
+import '../data/models/order_delivery_model.dart';
 import '../data/models/order_model.dart';
+import '../data/models/params/get_order_delivery_by_qr_params.dart';
 import '../data/models/validate_delivery_params.dart';
 part 'order_state.dart';
 
@@ -14,9 +17,11 @@ class OrderCubit extends Cubit<OrderState> {
   final GetOrdersUsecase getOrdersUsecase;
   final GetDeliveryByIdUsecase getDeliveryByIdUsecase;
   final ValidateDeliveryUsecase validateDeliveryUsecase;
+  final GetOrderDeliveryByQrUsecase getOrderDeliveryByQrUsecase;
   OrderCubit(
       {required this.getOrdersUsecase,
       required this.getDeliveryByIdUsecase,
+      required this.getOrderDeliveryByQrUsecase,
       required this.validateDeliveryUsecase})
       : super(OrderInitial());
 
@@ -65,6 +70,24 @@ class OrderCubit extends Cubit<OrderState> {
     } catch (e) {
       emit(state.copyWith(orderStatus: Status.error, message: e.toString()));
       return false;
+    }
+  }
+
+  Future<OrderDeliveryModel?> getOrderDeliveryByQrCode(
+      GetOrderDeliveryByQrParams params) async {
+    try {
+      emit(state.copyWith(orderStatus: Status.loading));
+      final response = await getOrderDeliveryByQrUsecase.call(params);
+      return response.fold((l) {
+        emit(state.copyWith(orderStatus: Status.error, message: l.errorMessage));
+        return null;
+      }, (r) {
+        emit(state.copyWith(orderStatus: Status.success, selectedOrderDelivery: r));
+        return r;
+      });
+    } catch (e) {
+      emit(state.copyWith(orderStatus: Status.error, message: e.toString()));
+      return null;
     }
   }
 

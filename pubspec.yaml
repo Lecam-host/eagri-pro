@@ -65,6 +65,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_form_builder: ^9.6.0
   jwt_decoder: ^2.0.1
+  hydrated_bloc: ^9.1.5
+  qr_code_scanner_plus: ^2.0.6
+  timeago: ^3.7.0
+  lottie: ^3.3.0
+  flutter_libphonenumber: ^2.5.0
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,8 +97,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/animations/
     - assets/images/
     - assets/translations/
+    - assets/audios/
     - assets/icons/navigations/
     - .env
   #   - images/a_dot_ham.jpeg

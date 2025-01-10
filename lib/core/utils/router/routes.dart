@@ -2,6 +2,8 @@ enum Routes {
   // Core Routes
   initial('/', ''),
   home('/home', 'home'),
+  services('/services', 'services'),
+  scanQrCode('/scan_qr_code', 'scan_qr_code'),
   market('/market', 'market'),
   profile('/profile', 'profile'),
 
@@ -19,6 +21,8 @@ enum Routes {
   favorites('/favorites', 'favorites'),
   notifications('/notifications', 'notifications'),
   settings('/settings', 'settings'),
+  deliverySuccess('/delivery-success', 'delivery-success'),
+  deliveryFailure('/delivery-failure', 'delivery-failure'),
 
   // Onboarding
   onBoarding('/onboarding', 'onboarding'),

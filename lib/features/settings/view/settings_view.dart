@@ -8,11 +8,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/supported_locales.dart';
 import '../../../core/utils/router/routes.dart';
 import '../../../generated/locale_keys.g.dart';
-import '../../auth/login/bloc/login_bloc.dart';
-import '../../auth/login/bloc/login_event.dart';
-import '../../auth/login/bloc/login_state.dart';
-import '../../profile/bloc/profile_bloc.dart';
-import '../../profile/bloc/profile_state.dart';
 import '../../theme/bloc/theme_bloc.dart';
 import '../../theme/bloc/theme_event.dart';
 import '../../theme/bloc/theme_state.dart';
@@ -28,26 +23,27 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> with SettingsViewMixin {
   @override
   Widget build(BuildContext context) {
-    final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, loginState) {
-        return BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, profileState) {
-            return BlocBuilder<ThemeBloc, ThemeState>(
-              builder: (context, themeState) {
-                return Scaffold(
-                  body: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text("settings".tr()),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
+    return Container();
+    // final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
+    // return BlocBuilder<LoginBloc, LoginState>(
+    //   builder: (context, loginState) {
+    //     return BlocBuilder<ProfileBloc, ProfileState>(
+    //       builder: (context, profileState) {
+    //         return BlocBuilder<ThemeBloc, ThemeState>(
+    //           builder: (context, themeState) {
+    //             return Scaffold(
+    //               body: SafeArea(
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.all(10),
+    //                   child: Text("settings".tr()),
+    //                 ),
+    //               ),
+    //             );
+    //           },
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
   }
 }

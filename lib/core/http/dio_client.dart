@@ -3,21 +3,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
+import '../../features/auth/data/datasources/auth_local_data_source.dart';
+import '../../features/auth/data/models/auth_model.dart';
+import '../constants/app_constants.dart';
+
 class DioClient {
   late Dio _dio;
-  //final AuthLocalDataSource auth;
-  DioClient._internal(
-    this._dio,
-    // this.auth,
-  );
+  final AuthLocalDataSource auth;
+  DioClient._internal(this._dio, this.auth);
 
   static DioClient? _instance;
 
-  factory DioClient(
-      //{
-      // required AuthLocalDataSource auth,
-      //},
-      ) {
+  factory DioClient({required AuthLocalDataSource auth}) {
     if (_instance == null) {
       final dio = Dio(BaseOptions(
         baseUrl: dotenv.env['BASE_URL'] ?? "",
@@ -40,28 +37,26 @@ class DioClient {
         enabled: kDebugMode,
       ));
 
-      _instance = DioClient._internal(
-        dio,
-      );
-      // _instance!._addAuthInterceptor();
+      _instance = DioClient._internal(dio, auth);
+      _instance!._addAuthInterceptor();
     }
 
     return _instance!;
   }
 
-  // void _addAuthInterceptor() {
-  //   // _dio.interceptors.clear(); // Supprime les intercepteurs existants pour éviter les doublons
-  //   _dio.interceptors.add(InterceptorsWrapper(
-  //     onRequest: (options, handler) async {
-  //      // final AuthModel? currentUser = await auth.loadData();
-  //       if (currentUser?.accessToken != null) {
-  //         options.headers['Authorization'] =
-  //             'Bearer ${currentUser!.accessToken}';
-  //       }
-  //       return handler.next(options);
-  //     },
-  //   ));
-  // }
+  void _addAuthInterceptor() {
+    // _dio.interceptors.clear(); // Supprime les intercepteurs existants pour éviter les doublons
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final AuthModel? currentUser = await auth.loadData();
+        if (currentUser?.accessToken != null) {
+          options.headers['Authorization'] =
+              'Bearer ${currentUser!.accessToken}';
+        }
+        return handler.next(options);
+      },
+    ));
+  }
 
   Dio get dio => _dio;
 }

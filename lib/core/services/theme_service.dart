@@ -53,251 +53,143 @@ class ThemeService {
   }
 
   static ThemeData buildTheme(ThemeState state) {
+    final brightness = state.isDark ? Brightness.dark : Brightness.light;
     return ThemeData(
-        brightness: state.isDark ? Brightness.dark : Brightness.light,
-        primaryColor: ColorConstants.primaryColor,
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: CupertinoDynamicColor.withBrightness(
+      brightness: brightness,
+      primaryColor: ColorConstants.primaryColor,
+      colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: MaterialColor(ColorConstants.primaryColor.value, {
+          50: ColorConstants.primaryColor.withOpacity(0.1),
+          100: ColorConstants.primaryColor.withOpacity(0.2),
+          200: ColorConstants.primaryColor.withOpacity(0.3),
+          300: ColorConstants.primaryColor.withOpacity(0.4),
+          400: ColorConstants.primaryColor.withOpacity(0.5),
+          500: ColorConstants.primaryColor.withOpacity(0.6),
+          600: ColorConstants.primaryColor.withOpacity(0.7),
+          700: ColorConstants.primaryColor.withOpacity(0.8),
+          800: ColorConstants.primaryColor.withOpacity(0.9),
+          900: ColorConstants.primaryColor,
+        }),
+        brightness: brightness,
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: CupertinoDynamicColor.withBrightness(
+          color: lightColor,
+          darkColor: darkColor,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStateProperty.all(
+            TextStyle(
+              fontFamily: fontFamily,
+              color: ColorConstants.primaryColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+      textTheme: TextTheme(
+        labelLarge: TextStyle(
+          fontSize: 16,
+          fontFamily: fontFamily,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
+          ),
+          fontWeight: FontWeight.w500,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 14,
+          fontFamily: fontFamilySecond,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
+          ),
+          fontWeight: FontWeight.w500,
+        ),
+        labelSmall: TextStyle(
+          fontSize: 12,
+          fontFamily: fontFamily,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
+          ),
+          fontWeight: FontWeight.w500,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 16,
+          fontFamily: fontFamily,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
+          ),
+          fontWeight: FontWeight.w500,
+        ),
+        displayLarge: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.bold,
+          fontSize: 35,
+          color: CupertinoDynamicColor.withBrightness(
             color: lightColor,
             darkColor: darkColor,
           ),
         ),
-        colorScheme: ColorScheme.light().copyWith(
-          primary: ColorConstants.primaryColor,
-          secondary: ColorConstants.secondaryColor,
-          onPrimary: Colors.white,
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            textStyle: WidgetStateProperty.all(
-              TextStyle(
-                fontFamily: fontFamily,
-                color: ColorConstants.primaryColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+        displaySmall: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.bold,
+          fontSize: 25,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
         ),
-        textTheme: TextTheme(
-          labelLarge: TextStyle(
-            fontSize: 16,
-            fontFamily: fontFamily,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-            fontWeight: FontWeight.w500,
+        displayMedium: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.bold,
+          fontSize: 30,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
-          labelMedium: TextStyle(
-            fontSize: 14,
-            fontFamily: fontFamilySecond,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-            fontWeight: FontWeight.w500,
+        ),
+        titleSmall: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 15,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
-          labelSmall: TextStyle(
-            fontSize: 12,
-            fontFamily: fontFamily,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-            fontWeight: FontWeight.w500,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: fontFamily,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
-          titleMedium: TextStyle(
-            fontSize: 16,
-            fontFamily: fontFamily,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-            fontWeight: FontWeight.w500,
+        ),
+        bodyLarge: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 14,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
-          displayLarge: TextStyle(
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 35,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
+          fontWeight: FontWeight.bold,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: fontFamily,
+          color: CupertinoDynamicColor.withBrightness(
+            color: lightColor,
+            darkColor: darkColor,
           ),
-          displaySmall: TextStyle(
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-          ),
-          displayMedium: TextStyle(
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-          ),
-          titleSmall: TextStyle(
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.w500,
-            fontSize: 15,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-          ),
-          titleLarge: TextStyle(
-            fontFamily: fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-          ),
-          bodyLarge: TextStyle(
-            fontFamily: fontFamily,
-            fontSize: 14,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-            fontWeight: FontWeight.bold,
-          ),
-          bodyMedium: TextStyle(
-            fontFamily: fontFamily,
-            color: CupertinoDynamicColor.withBrightness(
-              color: lightColor,
-              darkColor: darkColor,
-            ),
-          ),
-        )
-        // listTileTheme: const ListTileThemeData(
-        //     textColor: Colors.black,
-        //     style: ListTileStyle.drawer,
-        //     iconColor: Colors.black),
-        // appBarTheme: AppBarTheme(
-        //   titleSpacing: 0,
-        //   elevation: 2,
-        //   toolbarHeight: 100,
-        //   centerTitle: true,
-        //   surfaceTintColor: ConstantColors.grayScale200,
-        //   systemOverlayStyle: SystemUiOverlayStyle.light,
-        //   backgroundColor: ConstantColors.grayScale200,
-        //   titleTextStyle: TextStyle(
-        //     fontFamily: fontFamily,
-        //     fontWeight: FontWeight.w700,
-        //     fontSize: 19,
-        //     color: Colors.black,
-        //   ),
-        // ),
-        // scaffoldBackgroundColor: const Color.fromARGB(255, 247, 247, 247),
-
-        // bottomAppBarTheme: const BottomAppBarTheme(
-        //   color: Colors.white,
-        // ),
-        // colorScheme: const ColorScheme.light().copyWith(
-        //   primary: ConstantColors.primary,
-        //   secondary: ConstantColors.secondary,
-        //   onPrimary: Colors.white,
-        // ),
-        // inputDecorationTheme: const InputDecorationTheme(
-        //   isDense: true, // this will remove the default content padding
-        //   // now you can customize it here or add padding widget
-        //   contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-        // ),
-        // floatingActionButtonTheme: FloatingActionButtonThemeData(
-        //   backgroundColor: ConstantColors.primary,
-        //   foregroundColor: Colors.white,
-        // ),
-        // bottomSheetTheme: const BottomSheetThemeData(
-        //   backgroundColor: Colors.transparent,
-        // ),
-        // radioTheme: RadioThemeData(
-        //   fillColor: WidgetStateProperty.all(ConstantColors.primary),
-        // ),
-        // tabBarTheme: TabBarTheme(
-        //   indicator: UnderlineTabIndicator(
-        //     borderSide: BorderSide(
-        //       color: ConstantColors.primary,
-        //       width: 2,
-        //     ),
-        //   ),
-        //   labelColor: ConstantColors.primary,
-        //   unselectedLabelColor: Colors.black,
-        //   labelStyle: TextStyle(
-        //     color: ConstantColors.primary,
-        //     fontFamily: fontFamily,
-        //     // fontWeight: FontWeight.w700,
-        //     fontSize: 15,
-        //   ),
-        //   unselectedLabelStyle: TextStyle(
-        //     color: ConstantColors.primary,
-        //     fontFamily: fontFamily,
-        //     // fontWeight: FontWeight.w400,
-        //     fontSize: 15,
-        //   ),
-        // ),
-        // dialogTheme: DialogTheme(
-        //   surfaceTintColor: Colors.white,
-        //   contentTextStyle: TextStyle(
-        //     color: Colors.black,
-        //     fontFamily: fontFamily,
-        //     // fontWeight: FontWeight.w400,
-        //     fontSize: 20,
-        //   ),
-        //   titleTextStyle: TextStyle(
-        //     color: Colors.black,
-        //     fontFamily: fontFamily,
-        //     // fontWeight: FontWeight.w700,
-        //     fontSize: 20,
-        //   ),
-        // ),
-        // cardTheme: const CardTheme(color: Colors.white),
-        // shadowColor: Colors.grey.withOpacity(0.1),
-        // textButtonTheme: TextButtonThemeData(
-        //     style: ButtonStyle(
-        //   textStyle: WidgetStateProperty.all(
-        //     TextStyle(
-        //       fontFamily: fontFamily,
-        //       // fontWeight: FontWeight.w500,
-        //       color: ConstantColors.primary,
-        //       fontSize: 16,
-        //     ),
-        //   ),
-        // )),
-        // textTheme: ,
-        );
-    // CupertinoThemeData(
-    //   brightness: state.isDark ? Brightness.dark : Brightness.light,
-    //   primaryColor: CupertinoColors.systemBlue,
-    //   barBackgroundColor: const CupertinoDynamicColor.withBrightness(
-    //     color: CupertinoColors.lightBackgroundGray,
-    //     darkColor: CupertinoColors.darkBackgroundGray,
-    //   ),
-    //   scaffoldBackgroundColor: CupertinoDynamicColor.withBrightness(
-    //     color: ColorConstants.lightBackground,
-    //     darkColor: ColorConstants.darkBackground,
-    //   ),
-    //   textTheme: const CupertinoTextThemeData(
-    //     primaryColor: CupertinoDynamicColor.withBrightness(
-    //       color: CupertinoColors.black,
-    //       darkColor: CupertinoColors.white,
-    //     ),
-    //     textStyle: TextStyle(
-    //       color: CupertinoDynamicColor.withBrightness(
-    //         color: CupertinoColors.black,
-    //         darkColor: CupertinoColors.white,
-    //       ),
-    //     ),
-    //   ),
-    // );
+        ),
+      ),
+    );
   }
 }
 

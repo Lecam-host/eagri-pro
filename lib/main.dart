@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 // import 'package:eagri_pro/firebase_options.dart';
 import 'common/helpers/ui_helper.dart';
 import 'core/services/shared_preferences_service.dart';
@@ -19,6 +21,9 @@ void main() async {
 
   await dotenv.load();
   await SharedPreferencesService.instance.init();
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getTemporaryDirectory(),
+  );
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   ThemeService.getTheme();
@@ -54,6 +59,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final router = di<RouterManager>();
     UIHelper.initialize(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
@@ -63,9 +69,9 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           title: 'Eagri Pro',
-          theme: ThemeService.buildTheme(themeState),
+          theme: ThemeData.light(),
           debugShowCheckedModeBanner: false,
-          routerConfig: RouterManager.router,
+          routerConfig: router,
         );
       },
     );

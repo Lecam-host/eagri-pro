@@ -1,7 +1,7 @@
 //import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../features/profile/model/user_model.dart';
+// import '../../features/profile/model/user_model.dart';
 
 class FirebaseService {
   // static Future<String> uploadImage(File image, String child) async {
@@ -14,9 +14,9 @@ class FirebaseService {
   //   }
   // }
 
-  static String getProfilePhotoChild(UserModel userModel) {
-    return "ProfilePhotos/${userModel.email}/${const Uuid().v1()}.jpg";
-  }
+  // static String getProfilePhotoChild(UserModel userModel) {
+  //   return "ProfilePhotos/${userModel.email}/${const Uuid().v1()}.jpg";
+  // }
 
   // static Future<int?> sendVerificationCode({required String toMail}) async {
   //   try {

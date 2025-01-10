@@ -1,31 +1,403 @@
+import 'package:eagri_pro/common/components/button_custom.dart';
+import 'package:eagri_pro/common/components/custom_text_field.dart';
 import 'package:eagri_pro/common/components/tag_custom.dart';
-import 'package:eagri_pro/features/order/models/order_model.dart';
+import 'package:eagri_pro/core/constants/color_constants.dart';
+import 'package:eagri_pro/features/order/data/models/delivery_model.dart';
+import 'package:eagri_pro/features/order/data/models/order_model.dart';
+import 'package:eagri_pro/features/order/data/models/validate_delivery_params.dart';
+import 'package:eagri_pro/features/order/views/order_mixin.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class DetailsOrderView extends StatelessWidget {
-  final OrderModel order;
-  const DetailsOrderView({super.key, required this.order});
+import '../../../common/components/snack_bar_custom.dart';
+import '../../../core/utils/enum.dart';
+import '../cubit/order_cubit.dart';
 
+class DetailsOrderView extends StatefulWidget {
+  final String id;
+  final OrderModel? order;
+  const DetailsOrderView({super.key, required this.id, this.order});
+
+  @override
+  State<DetailsOrderView> createState() => _DetailsOrderViewState();
+}
+
+class _DetailsOrderViewState extends State<DetailsOrderView>
+    with OrderDetailsMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Details Order'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${order.name}',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 10),
-            TagCustom(
-                data: order.status ?? '',
-                color: Colors.green,
-                textColor: Colors.white),
-          ],
+        backgroundColor: ColorConstants.primaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
         ),
+        title: const Text(
+          'Détails de la commande',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      bottomSheet: delivery == null
+          ? null
+          : Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withAlpha(26), // Corrected here
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
+              ),
+              child: ButtonCustom(
+                label: "Valider la livraison",
+                isLoading: loadingValidatedDelivery,
+                onPressed: () async {
+                  final isConfirmed =
+                      await ShowConfirmDeliveryValidate(context);
+                  if (isConfirmed == null || !isConfirmed) {
+                    return;
+                  }
+                  final itemValided = await validate();
+                  if (itemValided) {
+                    SnackBarCustom.show(
+                      context: context,
+                      message: 'Livraison validée',
+                      type: SnackBarType.success,
+                    );
+                    context.pop();
+                  } else {
+                    SnackBarCustom.show(
+                      context: context,
+                      message: 'Code incorrect',
+                      type: SnackBarType.error,
+                    );
+                  }
+                },
+                backgroundColor: ColorConstants.primaryColor,
+                textColor: Colors.white,
+              ),
+            ),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : delivery == null
+              ? Center(
+                  child: Text(
+                  'La livraison n\'existe pas',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ))
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (orderSelected != null)
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    Colors.grey.withAlpha(26), // Corrected here
+                                spreadRadius: 0,
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "# ${orderSelected?.invoiceNumber}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        DateFormat.yMMMMd('fr').format(
+                                            orderSelected?.createdAt ??
+                                                DateTime.now()),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(
+                                              color: Colors.grey[600],
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorConstants.blueColor
+                                          .withAlpha(26), // Corrected here
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 6,
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            color: ColorConstants.blueColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          "En attente de livraison",
+                                          style: TextStyle(
+                                            color: ColorConstants.blueColor,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Divider(),
+                              const SizedBox(height: 16),
+                              _buildInfoSection(
+                                context,
+                                "Informations client",
+                                [
+                                  _buildInfoRow(context, "Nom",
+                                      orderSelected!.customer.username),
+                                  _buildInfoRow(context, "Téléphone",
+                                      orderSelected!.customer.phone),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                      Text(
+                        "Articles commandés",
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (delivery!.isNotEmpty)
+                        ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: delivery!.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final item = delivery![index];
+                            return ItemDeliveryProduct(item: item);
+                          },
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 48,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  "Aucun article dans cette commande",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+    );
+  }
+
+  Future<bool?> ShowConfirmDeliveryValidate(BuildContext context) {
+    return showDialog<bool?>(
+        context: context,
+        builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                title: Text('Confirmer la livraison',
+                    style: Theme.of(context).textTheme.titleMedium),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFieldCustom(
+                        label: "Code de confirmation",
+                        controller: code,
+                        hintText: "123456"),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text('Annuler'),
+                    onPressed: () => context.pop(false),
+                  ),
+                  TextButton(
+                      child: const Text('Confirmer'),
+                      onPressed: () async {
+                        context.pop(true);
+                      })
+                ]));
+  }
+
+  Widget _buildInfoSection(
+    BuildContext context,
+    String title,
+    List<Widget> children,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+        const SizedBox(height: 12),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            "$label: ",
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Colors.grey[600],
+                ),
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ItemDeliveryProduct extends StatelessWidget {
+  const ItemDeliveryProduct({
+    super.key,
+    required this.item,
+  });
+
+  final DeliveryModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withAlpha(26),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: ColorConstants.primaryColor.withAlpha(26),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.shopping_bag_outlined,
+                color: ColorConstants.primaryColor,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.product.product.name, // Simplified access
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ) ??
+                      TextStyle(), // Fallback to default TextStyle
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Quantité: ${item.quantity}",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ) ??
+                      TextStyle(),
+                ),
+              ],
+            ),
+          ),
+          TagCustom(
+            data: "${item.status?.description ?? 'Statut inconnu'}",
+            color: item.status?.color ?? Colors.grey,
+          ),
+        ],
       ),
     );
   }

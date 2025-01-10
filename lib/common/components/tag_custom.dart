@@ -9,7 +9,7 @@ class TagCustom extends StatelessWidget {
   const TagCustom(
       {super.key,
       required this.data,
-      this.color,
+      this.color = Colors.black,
       this.borderColor,
       this.textColor,
       this.prefixIcon,

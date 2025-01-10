@@ -38,13 +38,13 @@ const double borderRadius = 10;
 const double defaultBorderRadious = 12.0;
 const double defaultPadding = 16.0;
 
-
 abstract class ConstantUrl {
-  static const String gateway = 'http://84.247.170.134:8000';
+  static const String gateway = 'http://84.247.170.134:7030';
   static const String apiVersion = '/api/v1';
   static const String baseUrl = '$gateway$apiVersion';
   static const String msSecurity = '/security';
   static const String msCatalogue = '/catalog';
+  static const String msDelivery = '/delivery';
   static const String msMicroInsurance = '/micro-credit-insurance';
   static const String msArticle = '/article';
   static const String msAdvice = '/advice';

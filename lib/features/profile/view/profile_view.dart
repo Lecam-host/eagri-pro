@@ -1,30 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:eagri_pro/common/components/snack_bar_custom.dart';
+import 'package:eagri_pro/core/constants/color_constants.dart';
+import 'package:eagri_pro/core/utils/router/routes.dart';
+import 'package:eagri_pro/features/auth/bloc/login/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:eagri_pro/core/utils/router/routes.dart';
-import 'package:eagri_pro/features/auth/login/bloc/login_bloc.dart';
-import 'package:eagri_pro/features/auth/login/bloc/login_state.dart';
-import 'package:eagri_pro/features/profile/bloc/profile_bloc.dart';
-import 'package:eagri_pro/features/profile/bloc/profile_event.dart';
-import 'package:eagri_pro/features/profile/bloc/profile_state.dart';
-import 'package:eagri_pro/features/theme/bloc/theme_bloc.dart';
-import 'package:eagri_pro/features/theme/bloc/theme_state.dart';
-import 'package:eagri_pro/common/components/custom_trailing.dart';
-import 'package:eagri_pro/core/constants/app_constants.dart';
-import 'package:eagri_pro/core/constants/color_constants.dart';
-import 'package:eagri_pro/generated/locale_keys.g.dart';
-import 'package:eagri_pro/common/helpers/app_helper.dart';
-import 'package:eagri_pro/common/helpers/ui_helper.dart';
-import 'package:eagri_pro/features/profile/widget/birthday_text_field.dart';
-import 'package:eagri_pro/features/profile/widget/gender_text_field.dart';
-import 'package:eagri_pro/features/profile/widget/image_dialog.dart';
-import 'package:eagri_pro/features/profile/widget/profile_photo_widget.dart';
-import 'package:eagri_pro/features/profile/widget/profile_text_field.dart';
-import 'package:eagri_pro/common/widgets/custom_scaffold.dart';
-import 'package:eagri_pro/common/widgets/unauthenticated_user_widget.dart';
-part "profile_view_mixin.dart";
+
+import '../../../core/utils/function_utils.dart';
+import '../../auth/domain/entities/user_entity.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -33,210 +16,401 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView> with ProfileViewMixin {
+class _ProfileViewState extends State<ProfileView> {
+  late UserEntity account;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    account = context.read<AuthBloc>().state.account!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ProfileBloc profileBloc = BlocProvider.of<ProfileBloc>(context);
-    return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, themeState) {
-        return BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, profileState) {
-            return BlocListener<ProfileBloc, ProfileState>(
-              listener: (context, profileState) {
-                _listener(profileState);
-              },
-              child: PopScope(
-                canPop: !profileState.isLoading,
-                child: CustomScaffold(
-                  title: LocaleKeys.profile,
-                  trailing: CustomTrailing(
-                    showLoadingIndicator: true,
-                    text: LocaleKeys.done,
-                    isLoading: profileState.user == null
-                        ? true
-                        : profileState.isLoading,
-                    onPressed: () {
-                      if (_checkValues() && profileState.user != null) {
-                        profileState.user!.firstName =
-                            firstNameTextEditingController.text.trim();
-                        profileState.user!.lastName =
-                            lastNameTextEditingController.text.trim();
-                        profileState.user!.dateOfBirth = _selectedDate!;
-                        profileState.user!.gender = _selectedGender!;
-                        profileBloc.add(UpdateUser(user: profileState.user!));
-                      } else {
-                        AppHelper.showErrorMessage(
-                            context: context,
-                            content: LocaleKeys.please_fill_in_all_fields.tr());
-                      }
-                    },
-                  ),
-                  children: [
-                    profileState.user != null
-                        ? Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: themeState.isDark
-                                      ? ColorConstants.darkItem
-                                      : ColorConstants.lightItem,
-                                  borderRadius: UIHelper.borderRadius,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            CupertinoButton(
-                                              padding: EdgeInsets.zero,
-                                              onPressed: () {
-                                                showCupertinoDialog(
-                                                  barrierDismissible: true,
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return ImageDialog(
-                                                        imageUrl: profileState
-                                                            .user!
-                                                            .profilePhoto);
-                                                  },
-                                                );
-                                              },
-                                              child: ProfilePhotoWidget(
-                                                  imageUrl: profileState
-                                                      .user!.profilePhoto),
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: const Text(LocaleKeys
-                                                        .enter_your_info)
-                                                    .tr(),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        CupertinoButton(
-                                          onPressed: () {
-                                            showCupertinoDialog(
-                                              barrierDismissible: true,
-                                              context: context,
-                                              builder: (context) {
-                                                return ImageDialog(
-                                                    imageUrl: profileState
-                                                        .user!.profilePhoto);
-                                              },
-                                            );
-                                          },
-                                          padding: EdgeInsets.zero,
-                                          child: Text(
-                                            LocaleKeys.edit,
-                                            style: TextStyle(
-                                              color: themeState.isDark
-                                                  ? ColorConstants
-                                                      .darkPrimaryIcon
-                                                  : ColorConstants
-                                                      .lightPrimaryIcon,
-                                            ),
-                                          ).tr(),
-                                        ),
-                                      ],
-                                    ),
-                                    CupertinoListSection(
-                                      backgroundColor: Colors.transparent,
-                                      margin: EdgeInsets.zero,
-                                      topMargin: 10,
-                                      hasLeading: false,
-                                      dividerMargin: 10,
-                                      decoration: BoxDecoration(
-                                        color: themeState.isDark
-                                            ? ColorConstants.darkItem
-                                            : ColorConstants.lightItem,
-                                      ),
-                                      children: [
-                                        ProfileTextField(
-                                          textEditingController:
-                                              emailTextEditingController,
-                                          placeholder: LocaleKeys.email.tr(),
-                                          readOnly: true,
-                                          maxLength: null,
-                                        ),
-                                        ProfileTextField(
-                                          textEditingController:
-                                              firstNameTextEditingController,
-                                          placeholder:
-                                              LocaleKeys.first_name.tr(),
-                                        ),
-                                        ProfileTextField(
-                                          textEditingController:
-                                              lastNameTextEditingController,
-                                          placeholder:
-                                              LocaleKeys.last_name.tr(),
-                                          textInputAction: TextInputAction.done,
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                              CupertinoListSection(
-                                header:
-                                    const Text(LocaleKeys.date_of_birth).tr(),
-                                separatorColor: Colors.transparent,
-                                margin: const EdgeInsets.all(0),
-                                decoration: const BoxDecoration(
-                                    color: Colors.transparent),
-                                backgroundColor: Colors.transparent,
-                                children: [
-                                  BirthdayTextFieldWidget(
-                                    textEditingController:
-                                        birthdayTextEditingController,
-                                    initialDateTime: _selectedDate,
-                                    onDateTimeChanged: (date) {
-                                      _selectedDate = date;
-                                      birthdayTextEditingController.text =
-                                          dateFormat.format(_selectedDate!);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              CupertinoListSection(
-                                header: const Text(LocaleKeys.gender).tr(),
-                                separatorColor: Colors.transparent,
-                                margin: const EdgeInsets.all(0),
-                                decoration: const BoxDecoration(
-                                    color: Colors.transparent),
-                                backgroundColor: Colors.transparent,
-                                children: [
-                                  GenderTextFieldWidget(
-                                    initialGender: _selectedGender,
-                                    textEditingController:
-                                        genderTextEditingController,
-                                    onGenderChanged: (gender) {
-                                      genderTextEditingController.text =
-                                          AppConstants.getGender(gender);
-                                      setState(() {
-                                        _selectedGender = gender;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        : const UnauthenticatedUserWidget(),
-                  ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Mon profil', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        backgroundColor: ColorConstants.primaryColor,
+        elevation: 0,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Profile Header
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              CircleAvatar(
+                radius: 45,
+                backgroundColor:
+                    ColorConstants.primaryColor.withValues(alpha: .1),
+                child: Text(
+                  'JD',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: ColorConstants.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
-            );
-          },
-        );
-      },
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: ColorConstants.primaryColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  '${account.user.firstName} ${account.user.lastName}',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                Text(
+                  'john.doe@example.com',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // Profile Sections
+          _buildSection(
+            context,
+            'Informations personnelles',
+            [
+              _buildProfileItem(
+                context,
+                Icons.phone_outlined,
+                'Téléphone',
+                formatPhoneNumber(account.user.phone),
+                'phone',
+              ),
+              const SizedBox(height: 12),
+              _buildProfileItem(
+                context,
+                Icons.location_on_outlined,
+                'Adresse',
+                account.user.address,
+                'location',
+              ),
+              const SizedBox(height: 12),
+              _buildProfileItem(
+                context,
+                Icons.business_outlined,
+                'Entreprise',
+                account.user.organism.name,
+                'business',
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          _buildSection(
+            context,
+            'Paramètres',
+            [
+              _buildSettingItem(
+                context,
+                Icons.notifications_outlined,
+                'Notifications',
+                type: 'notifications',
+                onTap: () {},
+              ),
+              const SizedBox(height: 12),
+              _buildSettingItem(
+                context,
+                Icons.lock_outline,
+                'Mot de passe',
+                type: 'security',
+                onTap: () {},
+              ),
+              const SizedBox(height: 12),
+              _buildSettingItem(
+                context,
+                Icons.language_outlined,
+                'Langue',
+                value: 'Français',
+                type: 'language',
+                onTap: () {},
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+
+          _buildSection(
+            context,
+            'Application',
+            [
+              _buildSettingItem(
+                context,
+                Icons.help_outline,
+                'Aide',
+                type: 'help',
+                onTap: () {},
+              ),
+              const SizedBox(height: 12),
+              _buildSettingItem(
+                context,
+                Icons.info_outline,
+                'À propos',
+                type: 'info',
+                onTap: () {},
+              ),
+              const SizedBox(height: 12),
+              _buildSettingItem(
+                context,
+                Icons.logout,
+                'Déconnexion',
+                type: 'logout',
+                textColor: Colors.red,
+                showArrow: false,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Déconnexion'),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      content: const Text(
+                        'Êtes-vous sûr de vouloir vous déconnecter ?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => context.pop(),
+                          child: Text(
+                            'Annuler',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            {
+                              context.read<AuthBloc>().add(SendRequestLogout(
+                                  userName: account.user.username));
+                              context.goNamed(Routes.home.name);
+                              SnackBarCustom.show(
+                                context: context,
+                                message: 'Vous avez bien été déconnecté',
+                                type: SnackBarType.success,
+                              );
+                            }
+                            SnackBarCustom.show(
+                              context: context,
+                              message: 'Vous êtes déconnecté',
+                              type: SnackBarType.success,
+                            );
+                          },
+                          child: const Text(
+                            'Déconnexion',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context,
+    String title,
+    List<Widget> children,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+          ),
+        ),
+        Column(
+          children: children,
+        )
+      ],
+    );
+  }
+
+  Color _getColorForType(String type) {
+    switch (type) {
+      case 'phone':
+      case 'business':
+        return ColorConstants.primaryColor;
+      case 'location':
+        return Colors.blue;
+      case 'security':
+        return Colors.orange;
+      case 'notifications':
+        return Colors.purple;
+      case 'logout':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _buildProfileItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    String type,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _getColorForType(type).withValues(alpha: .05),
+        border: Border.all(
+          color: _getColorForType(type).withValues(alpha: .1),
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _getColorForType(type).withValues(alpha: .1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: _getColorForType(type),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingItem(
+    BuildContext context,
+    IconData icon,
+    String label, {
+    String? value,
+    required String type,
+    Color? textColor,
+    bool showArrow = true,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _getColorForType(type).withOpacity(0.05),
+          border: Border.all(
+            color: _getColorForType(type).withOpacity(0.1),
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _getColorForType(type).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: _getColorForType(type),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: textColor ?? Colors.grey[800],
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+            ),
+            if (value != null) ...[
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.grey[600],
+                    ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            if (showArrow)
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: Colors.grey[400],
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

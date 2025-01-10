@@ -117,7 +117,7 @@ mixin SettingsViewMixin on State<SettingsView> {
     );
   }
 
-  void _showLogOutDialog(BuildContext context, LoginBloc loginBloc) {
+  void _showLogOutDialog(BuildContext context) {
     showCupertinoDialog(
       context: context,
       barrierDismissible: true,
@@ -135,7 +135,7 @@ mixin SettingsViewMixin on State<SettingsView> {
             CupertinoDialogAction(
               child: const Text(LocaleKeys.yes).tr(),
               onPressed: () {
-                loginBloc.add(const LogoutButtonPressed());
+                // loginBloc.add(const LogoutButtonPressed());
                 context.go(Routes.login.path);
               },
             ),

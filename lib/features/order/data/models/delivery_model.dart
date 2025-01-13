@@ -40,6 +40,12 @@ class DeliveryStatus {
     'Annulé',
     Colors.red, // Couleur associée
   );
+  // Status non défini
+  static const DeliveryStatus undefined = DeliveryStatus._(
+    'UNDEFINED',
+    'Statut non défini',
+    Colors.grey, // Couleur associée
+  );
 
   // Liste de toutes les valeurs
   static const List<DeliveryStatus> values = [

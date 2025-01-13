@@ -76,17 +76,25 @@ class OrderCubit extends Cubit<OrderState> {
   Future<OrderDeliveryModel?> getOrderDeliveryByQrCode(
       GetOrderDeliveryByQrParams params) async {
     try {
-      emit(state.copyWith(orderStatus: Status.loading));
+      emit(state.copyWith(
+          orderStatus: Status.loading, selectedOrderDelivery: null));
       final response = await getOrderDeliveryByQrUsecase.call(params);
       return response.fold((l) {
-        emit(state.copyWith(orderStatus: Status.error, message: l.errorMessage));
+        emit(state.copyWith(
+            orderStatus: Status.error,
+            message: l.errorMessage,
+            selectedOrderDelivery: null));
         return null;
       }, (r) {
-        emit(state.copyWith(orderStatus: Status.success, selectedOrderDelivery: r));
+        emit(state.copyWith(
+            orderStatus: Status.success, selectedOrderDelivery: r));
         return r;
       });
     } catch (e) {
-      emit(state.copyWith(orderStatus: Status.error, message: e.toString()));
+      emit(state.copyWith(
+          orderStatus: Status.error,
+          message: e.toString(),
+          selectedOrderDelivery: null));
       return null;
     }
   }

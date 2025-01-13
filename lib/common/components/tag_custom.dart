@@ -5,6 +5,7 @@ class TagCustom extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final bool? withBorder;
+  final double? radius;
   final Widget? prefixIcon;
   const TagCustom(
       {super.key,
@@ -13,6 +14,7 @@ class TagCustom extends StatelessWidget {
       this.borderColor,
       this.textColor,
       this.prefixIcon,
+      this.radius,
       this.withBorder});
   final String data;
 
@@ -25,7 +27,7 @@ class TagCustom extends StatelessWidget {
         border: withBorder == true
             ? Border.all(color: borderColor ?? Colors.black, width: 0.5)
             : null,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(radius ?? 50),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

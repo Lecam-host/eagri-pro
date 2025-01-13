@@ -4,13 +4,11 @@ import 'package:eagri_pro/common/components/tag_custom.dart';
 import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/features/order/data/models/delivery_model.dart';
 import 'package:eagri_pro/features/order/data/models/order_model.dart';
-import 'package:eagri_pro/features/order/data/models/validate_delivery_params.dart';
 import 'package:eagri_pro/features/order/views/order_mixin.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../common/components/snack_bar_custom.dart';
 import '../../../core/utils/enum.dart';
 import '../cubit/order_cubit.dart';
@@ -43,58 +41,61 @@ class _DetailsOrderViewState extends State<DetailsOrderView>
         ),
         bottomSheet: delivery == null
             ? null
-            : Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withAlpha(26), // Corrected here
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, -3),
+            : delivery!.delivery.status == DeliveryStatus.delivered
+                ? null
+                : Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withAlpha(26), // Corrected here
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: ButtonCustom(
-                  label: "Valider la livraison",
-                  isLoading: loadingValidatedDelivery,
-                  onPressed: () async {
-                    final isConfirmed =
-                        await ShowConfirmDeliveryValidate(context);
-                    if (isConfirmed == null || !isConfirmed) {
-                      return;
-                    }
-                    final itemValided = await validate();
-                    if (itemValided) {
-                      SnackBarCustom.show(
-                        context: context,
-                        message: 'Livraison validée',
-                        type: SnackBarType.success,
-                      );
-                      // context.pop();
-                    } else {
-                      SnackBarCustom.show(
-                        context: context,
-                        message: context.read<OrderCubit>().state.message ??
-                            "Code invalide ou la livraison a déjà été validée",
-                        type: SnackBarType.error,
-                      );
-                    }
-                  },
-                  backgroundColor: ColorConstants.primaryColor,
-                  textColor: Colors.white,
-                ),
-              ),
+                    child: ButtonCustom(
+                      label: "Valider la livraison",
+                      isLoading: loadingValidatedDelivery,
+                      onPressed: () async {
+                        final isConfirmed =
+                            await ShowConfirmDeliveryValidate(context);
+                        if (isConfirmed == null || !isConfirmed) {
+                          return;
+                        }
+                        final itemValided = await validate();
+                        if (itemValided) {
+                          SnackBarCustom.show(
+                            context: context,
+                            message: 'Livraison validée',
+                            type: SnackBarType.success,
+                          );
+                          // context.pop();
+                        } else {
+                          SnackBarCustom.show(
+                            context: context,
+                            message: context.read<OrderCubit>().state.message ??
+                                "Code invalide ou la livraison a déjà été validée",
+                            type: SnackBarType.error,
+                          );
+                        }
+                      },
+                      backgroundColor: ColorConstants.primaryColor,
+                      textColor: Colors.white,
+                    ),
+                  ),
         body: BlocBuilder<OrderCubit, OrderState>(builder: (context, state) {
           if (state.orderStatus == Status.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          return state.selectedOrderDelivery == null
+          return state.orderStatus == Status.error &&
+                  state.selectedOrderDelivery == null
               ? Center(
                   child: Text(
-                  'La livraison n\'existe pas',
+                  'La livraison n\'existe pas ou Code invalide',
                   style: Theme.of(context).textTheme.titleMedium,
                 ))
               : SingleChildScrollView(
@@ -163,11 +164,8 @@ class _DetailsOrderViewState extends State<DetailsOrderView>
                               context,
                               "Informations client",
                               [
-                                _buildInfoRow(
-                                    context,
-                                    "Nom",
-                                    state.selectedOrderDelivery!.customer
-                                        .username),
+                                _buildInfoRow(context, "Nom",
+                                    state.selectedOrderDelivery!.customer.name),
                                 _buildInfoRow(
                                     context,
                                     "Téléphone",
@@ -323,18 +321,54 @@ class ItemDeliveryProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withAlpha(26),
-            spreadRadius: 0,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              TagCustom(
+                data: item.product.product.name,
+                radius: 5,
+                color: ColorConstants.primaryColor,
+              ),
+              const Spacer(),
+              TagCustom(
+                  data: item.status.description, color: item.status.color),
+            ],
           ),
+          const SizedBox(height: 10),
+          if (item.product.composites!.isNotEmpty)
+            ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final product = item.product.composites![index];
+                  return ItemProduct(item: product);
+                },
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemCount: item.product.composites!.length)
         ],
       ),
+    );
+  }
+}
+
+class ItemProduct extends StatelessWidget {
+  const ItemProduct({
+    super.key,
+    required this.item,
+  });
+
+  final ProductElement item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Container(
@@ -357,7 +391,7 @@ class ItemDeliveryProduct extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.product.product.name, // Simplified access
+                  item.product.name, // Simplified access
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w500,
@@ -365,20 +399,20 @@ class ItemDeliveryProduct extends StatelessWidget {
                       TextStyle(), // Fallback to default TextStyle
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  "Quantité: ${item.quantity}",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ) ??
-                      TextStyle(),
-                ),
+                // Text(
+                //   "Quantité: ${item.}",
+                //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                //             color: Colors.grey[600],
+                //           ) ??
+                //       TextStyle(),
+                // ),
               ],
             ),
           ),
-          TagCustom(
-            data: "${item.status?.description ?? 'Statut inconnu'}",
-            color: item.status?.color ?? Colors.grey,
-          ),
+          // TagCustom(
+          //   data: item..description,
+          //   color: item.status.color,
+          // ),
         ],
       ),
     );

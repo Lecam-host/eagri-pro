@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:developer';
 import 'package:eagri_pro/common/components/button_custom.dart';
-import 'package:eagri_pro/core/utils/function_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
@@ -109,17 +107,16 @@ class _ScanViewState extends State<ScanView> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        result != null
-                            ? 'Facture #${result!.code}'
-                            : 'Scannez le QR code de la facture',
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                        textAlign: TextAlign.center,
-                      ),
+                      if (result == null)
+                        Text(
+                          'Scannez le QR code de la facture',
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
                       if (result != null) ...[
                         const SizedBox(height: 16),
                         ButtonCustom(
@@ -137,6 +134,17 @@ class _ScanViewState extends State<ScanView> {
                           },
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
+                        ),
+                        const SizedBox(height: 8),
+                        ButtonCustom(
+                          label: "Scanner un nouveau code",
+                          onPressed: () async {
+                            await controller?.resumeCamera();
+                            setState(() {
+                              result = null;
+                            });
+                          },
+                          textColor: Colors.white,
                         ),
                       ],
                     ],
@@ -217,8 +225,16 @@ class _ScanViewState extends State<ScanView> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData)  {
-      // await PlaySong.success();
+    controller.scannedDataStream.listen((scanData) async {
+      if (scanData.code != null) {
+        // Pause la caméra immédiatement après la détection
+        await controller.pauseCamera();
+      } else {
+        await controller.resumeCamera();
+        setState(() {
+          result = null;
+        });
+      }
       setState(() {
         result = scanData;
         if (widget.onScan != null) {

@@ -75,7 +75,7 @@ class ExampleUsage extends StatelessWidget {
           type: SnackBarType.success,
         );
       },
-      child: Text('Show SnackBar'),
+      child: const Text('Show SnackBar'),
     );
   }
 }

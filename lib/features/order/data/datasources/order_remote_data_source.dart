@@ -68,10 +68,13 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
       final response = await httpHelper.post(
           '/composite/delivery/supplier-agent/qr-code/verify',
           data: params.toMap());
+      if (response.data["statusCode"] != 200) {
+        throw Exception(response.data["statusMessage"]);
+      }
       final result = OrderDeliveryModel.fromJson(response.data["data"]);
       return result;
-    } catch (e) {
-      throw Exception(e.toString());
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['statusMessage']);
     }
   }
 }

@@ -32,20 +32,20 @@ class _HomeViewState extends State<HomeView> {
       'type': 'delivery',
       'route': Routes.orders.name,
     },
-    {
-      'title': 'Commandes',
-      'subtitle': 'Mes commandes',
-      'icon': Icons.shopping_cart_outlined,
-      'type': 'orders',
-      'route': Routes.orders.name,
-    },
-    {
-      'title': 'Stock',
-      'subtitle': 'Gérer le stock',
-      'icon': Icons.inventory_2_outlined,
-      'type': 'inventory',
-      'route': Routes.orders.name,
-    },
+    // {
+    //   'title': 'Commandes',
+    //   'subtitle': 'Mes commandes',
+    //   'icon': Icons.shopping_cart_outlined,
+    //   'type': 'orders',
+    //   'route': Routes.orders.name,
+    // },
+    // {
+    //   'title': 'Stock',
+    //   'subtitle': 'Gérer le stock',
+    //   'icon': Icons.inventory_2_outlined,
+    //   'type': 'inventory',
+    //   'route': Routes.orders.name,
+    // },
   ];
 
   @override
@@ -75,13 +75,13 @@ class _HomeViewState extends State<HomeView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Statistiques',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 10),
-                        _buildStatisticsSection(context),
+                        // Text('Statistiques',
+                        //     style: Theme.of(context)
+                        //         .textTheme
+                        //         .titleLarge!
+                        //         .copyWith(fontWeight: FontWeight.bold)),
+                        // const SizedBox(height: 10),
+                        // _buildStatisticsSection(context),
                         const SizedBox(height: 30),
                         Text('Services',
                             style: Theme.of(context)

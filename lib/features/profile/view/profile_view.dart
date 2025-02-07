@@ -213,16 +213,14 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                         TextButton(
                           onPressed: () {
-                            {
-                              context.read<AuthBloc>().add(SendRequestLogout(
-                                  userName: account.user.username));
-                              context.goNamed(Routes.home.name);
-                              SnackBarCustom.show(
-                                context: context,
-                                message: 'Vous avez bien été déconnecté',
-                                type: SnackBarType.success,
-                              );
-                            }
+                            context.read<AuthBloc>().add(SendRequestLogout(
+                                userName: account.user.username));
+                            context.goNamed(Routes.login.name);
+                            SnackBarCustom.show(
+                              context: context,
+                              message: 'Vous avez bien été déconnecté',
+                              type: SnackBarType.success,
+                            );
                             SnackBarCustom.show(
                               context: context,
                               message: 'Vous êtes déconnecté',

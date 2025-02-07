@@ -27,15 +27,16 @@ class OrderCubit extends Cubit<OrderState> {
 
   // get orders
 
-  void getOrders(int supplierId) async {
+  void getOrders(int supplierId, {DeliveryStatus? status}) async {
     emit(state.copyWith(status: Status.loading));
     try {
-      final response =
-          await getOrdersUsecase(GetOrdersParams(supplierId: supplierId));
+      final response = await getOrdersUsecase(
+          GetOrdersParams(supplierId: supplierId, status: status));
       response.fold((l) {
         emit(state.copyWith(status: Status.error, message: l.errorMessage));
       }, (r) {
-        emit(state.copyWith(status: Status.success, orders: r));
+        emit(state.copyWith(
+            status: Status.success, orders: r, ordersFiltered: r));
       });
     } catch (e) {
       emit(state.copyWith(status: Status.error, message: e.toString()));
@@ -60,16 +61,33 @@ class OrderCubit extends Cubit<OrderState> {
       final response = await validateDeliveryUsecase.call(params);
 
       return response.fold((l) {
-        emit(
-            state.copyWith(orderStatus: Status.error, message: l.errorMessage));
+        emit(state.copyWith(message: l.errorMessage));
         return false;
       }, (r) {
         emit(state.copyWith(orderStatus: Status.success));
         return r;
       });
     } catch (e) {
-      emit(state.copyWith(orderStatus: Status.error, message: e.toString()));
+      emit(state.copyWith(message: e.toString()));
       return false;
+    }
+  }
+
+  // search order by invoice number
+  Future<void> searchOrderState(String invoiceNumber) async {
+    invoiceNumber = invoiceNumber.replaceAll("#", "").trim();
+    try {
+      if (invoiceNumber.isEmpty) {
+        emit(state.copyWith(ordersFiltered: state.orders));
+      }
+      final order = state.orders
+          .where((order) => order.invoiceNumber
+              .toUpperCase()
+              .startsWith(invoiceNumber.toUpperCase()))
+          .toList();
+      emit(state.copyWith(ordersFiltered: order));
+    } catch (e) {
+      emit(state.copyWith(orderSelected: null));
     }
   }
 
@@ -83,11 +101,14 @@ class OrderCubit extends Cubit<OrderState> {
         emit(state.copyWith(
             orderStatus: Status.error,
             message: l.errorMessage,
-            selectedOrderDelivery: null));
+            selectedOrderDelivery: null,
+            orderSelected: null));
         return null;
       }, (r) {
         emit(state.copyWith(
-            orderStatus: Status.success, selectedOrderDelivery: r));
+            orderStatus: Status.success,
+            selectedOrderDelivery: r,
+            orderSelected: null));
         return r;
       });
     } catch (e) {

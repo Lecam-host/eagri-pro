@@ -9,6 +9,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../core/constants/color_constants.dart';
+import '../data/models/delivery_model.dart';
+
+const filterStatus = [
+  DeliveryStatus.undefined,
+  DeliveryStatus.pending,
+  DeliveryStatus.delivered,
+  DeliveryStatus.cancelled,
+];
 
 class OrderView extends StatefulWidget {
   const OrderView({super.key});
@@ -53,6 +61,7 @@ class _OrderViewState extends State<OrderView> with OrderMixin {
             child: Column(
               children: [
                 TextField(
+                  onChanged: (value) => context.read<OrderCubit>().searchOrderState(value),
                   decoration: InputDecoration(
                     hintText: "Rechercher une commande",
                     prefixIcon: Icon(
@@ -102,26 +111,28 @@ class _OrderViewState extends State<OrderView> with OrderMixin {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _buildFilterChip(
-                      'Toutes',
-                      true,
-                      () {},
-                    ),
-                    const SizedBox(width: 8),
-                    _buildFilterChip(
-                      'En cours',
-                      false,
-                      () {},
-                    ),
-                    const SizedBox(width: 8),
-                    _buildFilterChip(
-                      'Terminées',
-                      false,
-                      () {},
-                    ),
-                  ],
+                SizedBox(
+                  height: 35,
+                  child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final data = filterStatus[index];
+                        return _buildFilterChip(
+                          data.description,
+                          selectedStatus == data,
+                          () {
+                            setState(() {
+                              selectedStatus = data;
+                              getOrders();
+                            });
+                          },
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(width: 8);
+                      },
+                      itemCount: filterStatus.length),
                 ),
               ],
             ),
@@ -132,17 +143,26 @@ class _OrderViewState extends State<OrderView> with OrderMixin {
                 if (state.ordersStatus == Status.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
+                if (state.ordersFiltered.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "AUCUNE FACTURE (${selectedStatus.description})",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  );
+                }
                 return ListView.separated(
                   padding: const EdgeInsets.all(10),
-                  itemCount: state.orders.length,
+                  itemCount: state.ordersFiltered.length,
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    final order = state.orders[index];
+                    final order = state.ordersFiltered[index];
                     return InkWell(
                         onTap: () {
                           context.read<OrderCubit>().setOrderSelected(order);
-                          context.pushNamed(Routes.scanQrCode.name);
+                          context.pushNamed(Routes.scanQrCode.name,
+                              extra: {'invoiceNumber': order.invoiceNumber});
                         },
                         child: ItemOrder(order: order));
                   },

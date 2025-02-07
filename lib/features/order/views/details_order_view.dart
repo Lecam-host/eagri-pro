@@ -17,7 +17,9 @@ import '../data/models/order_delivery_model.dart';
 class DetailsOrderView extends StatefulWidget {
   final String id;
   final OrderModel? order;
-  const DetailsOrderView({super.key, required this.id, this.order});
+  final String? invoiceNumber;
+  const DetailsOrderView(
+      {super.key, required this.id, this.order, this.invoiceNumber});
 
   @override
   State<DetailsOrderView> createState() => _DetailsOrderViewState();
@@ -39,63 +41,73 @@ class _DetailsOrderViewState extends State<DetailsOrderView>
             style: TextStyle(color: Colors.white),
           ),
         ),
-        bottomSheet: delivery == null
-            ? null
-            : delivery!.delivery.status == DeliveryStatus.delivered
-                ? null
-                : Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withAlpha(26), // Corrected here
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: const Offset(0, -3),
-                        ),
-                      ],
+        bottomSheet: BlocBuilder<OrderCubit, OrderState>(
+          builder: (context, state) {
+            if (state.selectedOrderDelivery != null &&
+                state.selectedOrderDelivery?.delivery.status !=
+                    DeliveryStatus.delivered) {
+              return Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withAlpha(26),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, -3),
                     ),
-                    child: ButtonCustom(
-                      label: "Valider la livraison",
-                      isLoading: loadingValidatedDelivery,
-                      onPressed: () async {
-                        final isConfirmed =
-                            await ShowConfirmDeliveryValidate(context);
-                        if (isConfirmed == null || !isConfirmed) {
-                          return;
-                        }
-                        final itemValided = await validate();
-                        if (itemValided) {
-                          SnackBarCustom.show(
-                            context: context,
-                            message: 'Livraison validée',
-                            type: SnackBarType.success,
-                          );
-                          // context.pop();
-                        } else {
-                          SnackBarCustom.show(
-                            context: context,
-                            message: context.read<OrderCubit>().state.message ??
-                                "Code invalide ou la livraison a déjà été validée",
-                            type: SnackBarType.error,
-                          );
-                        }
-                      },
-                      backgroundColor: ColorConstants.primaryColor,
-                      textColor: Colors.white,
-                    ),
-                  ),
+                  ],
+                ),
+                child: ButtonCustom(
+                  label: "Valider la livraison",
+                  isLoading: loadingValidatedDelivery,
+                  onPressed: () async {
+                    final isConfirmed =
+                        await ShowConfirmDeliveryValidate(context);
+                    if (isConfirmed == null || !isConfirmed) {
+                      return;
+                    }
+                    setState(() {
+                      delivery = state.selectedOrderDelivery;
+                    });
+                    final itemValided = 
+                        await validate(state.selectedOrderDelivery!);
+                    if (itemValided) {
+                      return SnackBarCustom.show(
+                        context: context,
+                        message: 'Livraison validée',
+                        type: SnackBarType.success,
+                      );
+
+                      // context.pop();
+                    } else {
+                      return SnackBarCustom.show(
+                        context: context,
+                        message: context.read<OrderCubit>().state.message ??
+                            "Code invalide ou la livraison a déjà été validée",
+                        type: SnackBarType.error,
+                      );
+                    }
+                  },
+                  backgroundColor: ColorConstants.primaryColor,
+                  textColor: Colors.white,
+                ),
+              );
+            }
+            return const SizedBox();
+          },
+        ),
         body: BlocBuilder<OrderCubit, OrderState>(builder: (context, state) {
           if (state.orderStatus == Status.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          return state.orderStatus == Status.error &&
+          return state.orderStatus == Status.error ||
                   state.selectedOrderDelivery == null
               ? Center(
                   child: Text(
-                  'La livraison n\'existe pas ou Code invalide',
+                  'FACTURE NON CONFORME',
                   style: Theme.of(context).textTheme.titleMedium,
                 ))
               : SingleChildScrollView(
@@ -128,7 +140,7 @@ class _DetailsOrderViewState extends State<DetailsOrderView>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "# ${delivery?.delivery.invoiceNumber}",
+                                      "# ${state.selectedOrderDelivery?.delivery.invoiceNumber}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
@@ -340,7 +352,8 @@ class ItemDeliveryProduct extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          if (item.product.composites!.isNotEmpty)
+          if (item.product.composites != null &&
+              item.product.composites!.isNotEmpty)
             ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -399,13 +412,13 @@ class ItemProduct extends StatelessWidget {
                       TextStyle(), // Fallback to default TextStyle
                 ),
                 const SizedBox(height: 4),
-                // Text(
-                //   "Quantité: ${item.}",
-                //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                //             color: Colors.grey[600],
-                //           ) ??
-                //       TextStyle(),
-                // ),
+                Text(
+                  "Quantité: ${item.quantity}",
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ) ??
+                      TextStyle(),
+                ),
               ],
             ),
           ),

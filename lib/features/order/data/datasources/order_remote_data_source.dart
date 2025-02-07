@@ -25,13 +25,14 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   @override
   Future<List<OrderModel>> getOrders(GetOrdersParams params) async {
     try {
-      final response = await httpHelper
-          .get('/composite/delivery/supplier/${params.supplierId}');
+      final response = await httpHelper.get(
+          '/composite/delivery/supplier/${params.supplierId}',
+          queryParameters: params.toMap());
       return (response.data["data"]['items'] as List)
           .map((e) => OrderModel.fromJson(e))
           .toList();
-    } catch (e) {
-      throw Exception(e.toString());
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['statusMessage']);
     }
   }
 

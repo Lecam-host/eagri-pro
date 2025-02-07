@@ -114,14 +114,14 @@ class ItemOrder extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 )),
                         const SizedBox(height: 4),
-                        Text(
-                          order.customer.name,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
-                        ),
+                        Text(order.customer.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: Colors.grey[600],
+                                )),
                       ],
                     ),
                   ),
@@ -174,8 +174,8 @@ class ItemOrder extends StatelessWidget {
                   const SizedBox(width: 24),
                   _buildInfoItem(
                     context,
-                    Icons.shopping_cart_outlined,
-                    "${'2'} produits",
+                    Icons.access_time_outlined,
+                    DateFormat.Hm('fr').format(order.createdAt),
                   ),
                 ],
               ),

@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "992347710875",
+    "project_id": "e-agri-dca21",
+    "storage_bucket": "e-agri-dca21.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992347710875:android:819430c42a35d023822d3e",
+        "android_client_info": {
+          "package_name": "com.mobisoft.eagri"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992347710875-rbuk5rjq0j5cqg3sr2soqucra6875san.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFulT3VB7jSEOZdxxCALnnHnoaJP0bBUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992347710875-rbuk5rjq0j5cqg3sr2soqucra6875san.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "992347710875-u4c0s9dda6c89dgs6j46cppa71f217ej.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mobisoft.eagri"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992347710875:android:37e5ff0e05cd271f822d3e",
+        "android_client_info": {
+          "package_name": "com.mobisoft.eagri_pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992347710875-rbuk5rjq0j5cqg3sr2soqucra6875san.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFulT3VB7jSEOZdxxCALnnHnoaJP0bBUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "992347710875-rbuk5rjq0j5cqg3sr2soqucra6875san.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "992347710875-u4c0s9dda6c89dgs6j46cppa71f217ej.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mobisoft.eagri"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -15,151 +15,32 @@ import '../../auth/bloc/login/auth_bloc.dart';
 import '../../auth/domain/entities/user_entity.dart';
 import '../data/models/params/get_order_delivery_by_qr_params.dart';
 import '../data/models/validate_delivery_params.dart';
-import '../domain/usecases/get_delivery_by_id_usecase.dart';
 
 mixin OrderMixin on State<OrderView> {
+  DeliveryStatus selectedStatus = DeliveryStatus.undefined;
   @override
   void initState() {
     super.initState();
     final user = context.read<AuthBloc>().state.user;
     if (user != null) {
-      context.read<OrderCubit>().getOrders(user.organismAccountId!);
+      getOrders();
     }
   }
+
+  getOrders() async {
+    context.read<OrderCubit>().getOrders(
+        context.read<AuthBloc>().state.user!.organismAccountId!,
+        status:
+            selectedStatus == DeliveryStatus.undefined ? null : selectedStatus);
+  }
 }
-
-// class ItemOrder extends StatelessWidget {
-//   final OrderModel order;
-
-//   const ItemOrder({Key? key, required this.order}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(12),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.grey.withOpacity(0.1),
-//             spreadRadius: 0,
-//             blurRadius: 10,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: ClipRRect(
-//         borderRadius: BorderRadius.circular(12),
-//         child: Material(
-//           color: Colors.transparent,
-//           child: InkWell(
-//             onTap: () {},
-//             child: Padding(
-//               padding: const EdgeInsets.all(16),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       Text(
-//                         'Commande #${order.invoiceNumber}',
-//                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                       ),
-//                       _buildStatusChip(context, "En attente de livraison"),
-//                     ],
-//                   ),
-//                   const SizedBox(height: 12),
-//                   Row(
-//                     children: [
-//                       _buildInfoItem(
-//                         context,
-//                         Icons.calendar_today_outlined,
-//                         order.createdAt,
-//                       ),
-//                       const SizedBox(width: 24),
-//                       _buildInfoItem(
-//                         context,
-//                         Icons.location_on_outlined,
-//                         "Adresse",
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildStatusChip(BuildContext context, String status) {
-//     Color statusColor;
-//     String statusText;
-
-//     switch (status.toLowerCase()) {
-//       case 'en cours':
-//         statusColor = Colors.orange;
-//         statusText = 'En cours';
-//         break;
-//       case 'terminé':
-//         statusColor = Colors.green;
-//         statusText = 'Terminé';
-//         break;
-//       case 'annulé':
-//         statusColor = Colors.red;
-//         statusText = 'Annulé';
-//         break;
-//       default:
-//         statusColor = Colors.grey;
-//         statusText = status;
-//     }
-
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-//       decoration: BoxDecoration(
-//         color: statusColor.withOpacity(0.1),
-//         borderRadius: BorderRadius.circular(20),
-//       ),
-//       child: Text(
-//         statusText,
-//         style: TextStyle(
-//           color: statusColor,
-//           fontSize: 12,
-//           fontWeight: FontWeight.w500,
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildInfoItem(BuildContext context, IconData icon, String text) {
-//     return Row(
-//       children: [
-//         Icon(
-//           icon,
-//           size: 16,
-//           color: Colors.grey[600],
-//         ),
-//         const SizedBox(width: 4),
-//         Text(
-//           text,
-//           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-//                 color: Colors.grey[600],
-//               ),
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 mixin OrderDetailsMixin on State<DetailsOrderView> {
   OrderDeliveryModel? delivery;
   OrderModel? orderSelected;
   bool loadingValidatedDelivery = false;
   bool itemValided = false;
+
   final TextEditingController code = TextEditingController();
   late UserEntity? user;
   bool loading = true;
@@ -174,21 +55,18 @@ mixin OrderDetailsMixin on State<DetailsOrderView> {
     user = context.read<AuthBloc>().state.account;
     orderSelected = context.read<OrderCubit>().state.orderSelected;
     if (auth != null) {
-      getDelivery(GetOrderDeliveryByQrParams(
-          qrCode: widget.id, supplierId: auth!.organismAccountId!));
+      context.read<OrderCubit>().getOrderDeliveryByQrCode(
+          GetOrderDeliveryByQrParams(
+              qrCode: widget.id,
+              supplierId: auth!.organismAccountId!,
+              invoiceNumber: widget.invoiceNumber));
     }
   }
 
-  getDelivery(GetOrderDeliveryByQrParams params) async {
-    delivery =
-        await context.read<OrderCubit>().getOrderDeliveryByQrCode(params);
-    setState(() {});
-  }
-
-  Future<bool> validate() async {
+  Future<bool> validate(OrderDeliveryModel delivery) async {
     itemValided = await context.read<OrderCubit>().validateDelivery(
         ValidateDeliveryParams(
-            deliveryId: delivery!.delivery.id,
+            deliveryId: delivery.delivery.id,
             agentId: user!.user.account.id,
             supplierId: auth!.organismAccountId!,
             pinCode: code.text));

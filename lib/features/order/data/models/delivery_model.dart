@@ -43,7 +43,7 @@ class DeliveryStatus {
   // Status non défini
   static const DeliveryStatus undefined = DeliveryStatus._(
     'UNDEFINED',
-    'Statut non défini',
+    'Tout',
     Colors.grey, // Couleur associée
   );
 

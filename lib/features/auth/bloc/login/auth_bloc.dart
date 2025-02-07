@@ -13,6 +13,7 @@ import '../../data/models/user_model.dart';
 import '../../domain/entities/account_entity.dart';
 import '../../domain/entities/auth_entity.dart';
 import '../../domain/usecases/check_auth_usecase.dart';
+import '../../domain/usecases/logout_usecase.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
@@ -21,7 +22,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   final GetAccountUsecase getAccountUsecase;
   final GetUserByIdUsecase getUserByIdUsecase;
   final CheckAuthUsecase checkAuthUsecase;
-  // final LogoutUsecase logoutUsecase;
+  final LogoutUsecase logoutUsecase;
   // final RegistrationTokenUsecase registrationTokenUsecase;
   AuthBloc(
       {required this.loginUsecase,
@@ -29,6 +30,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       // required this.registrationTokenUsecase,
       // required this.logoutUsecase,
       required this.getUserByIdUsecase,
+      required this.logoutUsecase,
       required this.getAccountUsecase})
       : super(const LoginInitial()) {
     on<SendRequestLogin>((event, emit) async {
@@ -72,21 +74,21 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
             status: AuthenticationStatus.authenticated));
       });
     });
-    // on<SendRequestLogout>((event, emit) async {
-    //   emit(state.copyWith(stateStatus: Status.loading));
-    //   await FirebaseMessaging.instance.requestPermission(provisional: true);
-    //   String? token = "";
-    //   token = await NotificationUtils().getFirebaseMessagingToken();
-    //   final result = await logoutUsecase.call(LogoutParams(token: token, userName: event.userName));
-    //   result.fold((failure) {
-    //     emit(state.copyWith(
-    //         stateStatus: Status.error,
-    //         errorMessage: failure.errorMessage,
-    //         status: AuthenticationStatus.unauthenticated));
-    //   }, (user) {
-    //     emit(AuthState(status: AuthenticationStatus.unauthenticated));
-    //   });
-    // });
+    on<SendRequestLogout>((event, emit) async {
+      emit(state.copyWith(stateStatus: Status.loading));
+      // await FirebaseMessaging.instance.requestPermission(provisional: true);
+      String? token = "";
+      // token = await NotificationUtils().getFirebaseMessagingToken();
+      final result = await logoutUsecase.call(LogoutParams(token: token, userName: event.userName));
+      result.fold((failure) {
+        emit(state.copyWith(
+            stateStatus: Status.error,
+            errorMessage: failure.errorMessage,
+            status: AuthenticationStatus.unauthenticated));
+      }, (user) {
+        emit(AuthState(status: AuthenticationStatus.unauthenticated));
+      });
+    });
     on<GetAccountEvent>((event, emit) async {
       try {
         final result = await getAccountUsecase.call(NoParams());

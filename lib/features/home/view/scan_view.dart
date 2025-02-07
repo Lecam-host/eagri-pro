@@ -9,7 +9,8 @@ import '../../../core/utils/router/routes.dart';
 
 class ScanView extends StatefulWidget {
   final Function(String)? onScan;
-  const ScanView({Key? key, this.onScan}) : super(key: key);
+  final String? invoiceNumber;
+  const ScanView({Key? key, this.onScan, this.invoiceNumber}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ScanViewState();
@@ -128,7 +129,10 @@ class _ScanViewState extends State<ScanView> {
                             } else {
                               context.pushReplacementNamed(
                                 Routes.detailsOrders.name,
-                                extra: result!.code,
+                                extra: {
+                                  'code': result!.code,
+                                  'invoiceNumber': widget.invoiceNumber
+                                },
                               );
                             }
                           },

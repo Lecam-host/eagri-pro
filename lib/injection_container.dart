@@ -89,7 +89,7 @@ Future<void> configureDependencies() async {
       loginUsecase: di(),
       checkAuthUsecase: di(),
       getUserByIdUsecase: di(),
-      // logoutUsecase: di(),
+      logoutUsecase: di(),
       getAccountUsecase: di()
       ));
   // di.registerFactory(() => ForgotPasswordCubit(

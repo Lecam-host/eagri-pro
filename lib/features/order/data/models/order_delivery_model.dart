@@ -137,20 +137,20 @@ class DeliveryItem {
   final DeliveryStatus status;
   final int productId;
   final int supplierId;
-  final int deliveredBy;
+  final int? deliveredBy;
   final double unitPrice;
   final int quantity;
-  final DateTime deliveryDate;
+  final DateTime? deliveryDate;
 
   DeliveryItem({
     required this.id,
     required this.status,
     required this.productId,
     required this.supplierId,
-    required this.deliveredBy,
+    this.deliveredBy,
     required this.unitPrice,
     required this.quantity,
-    required this.deliveryDate,
+    this.deliveryDate,
   });
 
   factory DeliveryItem.fromJson(Map<String, dynamic> json) => DeliveryItem(
@@ -162,7 +162,9 @@ class DeliveryItem {
         deliveredBy: json["deliveredBy"],
         unitPrice: json["unitPrice"],
         quantity: json["quantity"],
-        deliveryDate: DateTime.parse(json["deliveryDate"]),
+        deliveryDate: json["deliveryDate"] == null
+            ? null
+            : DateTime.parse(json["deliveryDate"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -173,49 +175,53 @@ class DeliveryItem {
         "deliveredBy": deliveredBy,
         "unitPrice": unitPrice,
         "quantity": quantity,
-        "deliveryDate": deliveryDate.toIso8601String(),
+        "deliveryDate": deliveryDate?.toIso8601String(),
       };
 }
 
 class OrderDeliveryModelItem {
   final Customer supplier;
-  final Customer deliveredBy;
+  final Customer? deliveredBy;
   final ProductElement product;
   final double unitPrice;
-  final int quantity;
+  final int? quantity;
   final DeliveryStatus status;
-  final DateTime deliveryDate;
+  final DateTime? deliveryDate;
 
   OrderDeliveryModelItem({
     required this.supplier,
-    required this.deliveredBy,
+    this.deliveredBy,
     required this.product,
     required this.unitPrice,
-    required this.quantity,
+    this.quantity,
     required this.status,
-    required this.deliveryDate,
+    this.deliveryDate,
   });
 
   factory OrderDeliveryModelItem.fromJson(Map<String, dynamic> json) =>
       OrderDeliveryModelItem(
         supplier: Customer.fromJson(json["supplier"]),
-        deliveredBy: Customer.fromJson(json["deliveredBy"]),
+        deliveredBy: json["deliveredBy"] == null
+            ? null
+            : Customer.fromJson(json["deliveredBy"]),
         product: ProductElement.fromJson(json["product"]),
         unitPrice: json["unitPrice"],
         quantity: json["quantity"],
         status: DeliveryStatus.fromString(json["status"]) ??
             DeliveryStatus.undefined,
-        deliveryDate: DateTime.parse(json["deliveryDate"]),
+        deliveryDate: json["deliveryDate"] == null
+            ? null
+            : DateTime.parse(json["deliveryDate"]),
       );
 
   Map<String, dynamic> toJson() => {
         "supplier": supplier.toJson(),
-        "deliveredBy": deliveredBy.toJson(),
+        "deliveredBy": deliveredBy?.toJson(),
         "product": product.toJson(),
         "unitPrice": unitPrice,
         "quantity": quantity,
         "status": status,
-        "deliveryDate": deliveryDate.toIso8601String(),
+        "deliveryDate": deliveryDate?.toIso8601String(),
       };
 }
 
@@ -224,6 +230,7 @@ class ProductElement {
   final String? numberIdentification;
   final double price;
   final PurpleProduct product;
+  final int? quantity;
   final List<ProductElement>? composites;
 
   ProductElement({
@@ -231,6 +238,7 @@ class ProductElement {
     required this.numberIdentification,
     required this.price,
     required this.product,
+    this.quantity,
     this.composites,
   });
 
@@ -238,6 +246,7 @@ class ProductElement {
         id: json["id"],
         numberIdentification: json["number_identification"],
         price: json["price"],
+        quantity: json["quantity"],
         product: PurpleProduct.fromJson(json["product"]),
         composites: json["composites"] == null
             ? null
@@ -249,6 +258,7 @@ class ProductElement {
         "id": id,
         "number_identification": numberIdentification,
         "price": price,
+        "quantity": quantity,
         "product": product.toJson(),
         "composites": composites == null
             ? []

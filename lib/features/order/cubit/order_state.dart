@@ -2,6 +2,7 @@ part of 'order_cubit.dart';
 
 class OrderState extends Equatable {
   final List<OrderModel> orders;
+  final List<OrderModel> ordersFiltered;
   final Status ordersStatus;
   final Status orderStatus;
   final OrderModel? orderSelected;
@@ -9,6 +10,7 @@ class OrderState extends Equatable {
   final String? message;
   const OrderState(
       {this.orders = const <OrderModel>[],
+      this.ordersFiltered = const <OrderModel>[],
       this.ordersStatus = Status.initial,
       this.message,
       this.orderSelected,
@@ -17,6 +19,7 @@ class OrderState extends Equatable {
 
   OrderState copyWith({
     List<OrderModel>? orders,
+    List<OrderModel>? ordersFiltered,
     Status? status,
     Status? orderStatus,
     String? message,
@@ -25,6 +28,7 @@ class OrderState extends Equatable {
   }) {
     return OrderState(
       orders: orders ?? this.orders,
+      ordersFiltered: ordersFiltered ?? this.ordersFiltered,
       ordersStatus: status ?? this.ordersStatus,
       orderStatus: orderStatus ?? this.orderStatus,
       selectedOrderDelivery:
@@ -35,13 +39,14 @@ class OrderState extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         orders,
+        ordersFiltered,
         ordersStatus,
-        message ?? '',
+        message,
         orderStatus,
-        orderSelected ?? '',
-        selectedOrderDelivery ?? '',
+        orderSelected,
+        selectedOrderDelivery,
       ];
 }
 

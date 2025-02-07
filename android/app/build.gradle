@@ -3,10 +3,12 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services' version '4.4.2' apply false
+    // id 'com.google.gms.google-services'
 }
 
 android {
-    namespace = "com.example.eagri_pro"
+    namespace = "com.mobisoft.eagri_pro"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +24,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.eagri_pro"
+        applicationId = "com.mobisoft.eagri_pro"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -46,7 +48,13 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     implementation 'com.google.errorprone:error_prone_annotations:2.11.0'
     implementation 'com.google.crypto.tink:tink-android:1.6.1'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    
 }
 flutter {
     source = "../.."
 }
+ 

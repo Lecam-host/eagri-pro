@@ -79,8 +79,10 @@ class RouterManager extends GoRouter {
                                         path: Routes.detailsOrders.path,
                                         name: Routes.detailsOrders.name,
                                         builder: (context, state) {
-                                          final orderId = state.extra as String;
-                                          return DetailsOrderView(id: orderId);
+                                          final extras = state.extra as Map<String, dynamic>?;
+                                          final code = extras?['code'];
+                                          final invoiceNumber = extras?['invoiceNumber'];
+                                          return DetailsOrderView(id: code, invoiceNumber: invoiceNumber);
                                         }),
                                     GoRoute(
                                         path: Routes.deliverySuccess.path,
@@ -94,12 +96,12 @@ class RouterManager extends GoRouter {
                                         path: Routes.deliveryFailure.path,
                                         name: Routes.deliveryFailure.name,
                                         builder: (context, state) {
-                                          final Map<String, dynamic> args =
+                                          final args =
                                               state.extra
-                                                  as Map<String, dynamic>;
+                                                  as Map<String, dynamic>?;
                                           return DeliveryFailureView(
-                                            orderId: args['orderId'],
-                                            errorMessage: args['errorMessage'],
+                                            orderId: args?['orderId'],
+                                            errorMessage: args?['errorMessage'],
                                           );
                                         }),
                                   ])
@@ -139,8 +141,13 @@ class RouterManager extends GoRouter {
                 GoRoute(
                     path: Routes.scanQrCode.path,
                     name: Routes.scanQrCode.name,
-                    pageBuilder: (context, state) =>
-                        getPage(child: const ScanView(), state: state)),
+                    pageBuilder: (context, state) {
+                      final extras = state.extra as Map<String, dynamic>?;
+                      final invoiceNumber = extras?['invoiceNumber'];
+                      return getPage(
+                          child: ScanView(invoiceNumber: invoiceNumber),
+                          state: state);
+                    }),
                 GoRoute(
                     path: Routes.services.path,
                     name: Routes.services.name,

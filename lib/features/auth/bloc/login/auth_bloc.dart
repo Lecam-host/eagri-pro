@@ -49,13 +49,15 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
               errorMessage:
                   "Vous n'avez pas le droit d'accéder à cette application",
               status: AuthenticationStatus.unauthenticated));
+          return;
+        } else {
+          emit(state.copyWith(
+              stateStatus: Status.success,
+              user: user,
+              status: AuthenticationStatus.authenticated));
+          // add(SendRequestRegistrationTokenEvent(userName: event.username));
+          add(GetAccountEvent());
         }
-        emit(state.copyWith(
-            stateStatus: Status.success,
-            user: user,
-            status: AuthenticationStatus.authenticated));
-        // add(SendRequestRegistrationTokenEvent(userName: event.username));
-        add(GetAccountEvent());
       });
     });
     on<CheckAuthentification>((event, emit) async {
@@ -79,7 +81,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       // await FirebaseMessaging.instance.requestPermission(provisional: true);
       String? token = "";
       // token = await NotificationUtils().getFirebaseMessagingToken();
-      final result = await logoutUsecase.call(LogoutParams(token: token, userName: event.userName));
+      final result = await logoutUsecase
+          .call(LogoutParams(token: token, userName: event.userName));
       result.fold((failure) {
         emit(state.copyWith(
             stateStatus: Status.error,

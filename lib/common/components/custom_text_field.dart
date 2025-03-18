@@ -202,7 +202,8 @@ class TextFieldCustom extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium,
               ),
               hintText: hintText,
-              hintStyle: const TextStyle(color: Colors.grey),
+              hintStyle: const TextStyle(
+                  color: Colors.grey, fontWeight: FontWeight.w300),
               // prefixIcon: prefixIcon,
               // suffixIcon: suffixIcon,
               border: withBorder!

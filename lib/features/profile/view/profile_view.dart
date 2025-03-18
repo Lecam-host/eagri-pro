@@ -123,7 +123,7 @@ class _ProfileViewState extends State<ProfileView> {
                 context,
                 Icons.business_outlined,
                 'Entreprise',
-                account.user.organism.name,
+                 '',
                 'business',
               ),
             ],

@@ -54,7 +54,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     try {
       await local.saveData(value);
     } catch (e) {
-      throw CacheException();
+      throw CacheException(errorMessage: e.toString());
     }
   }
 }

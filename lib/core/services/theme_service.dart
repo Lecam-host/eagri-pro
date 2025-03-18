@@ -118,6 +118,13 @@ class ThemeService {
           ),
           fontWeight: FontWeight.w500,
         ),
+        headlineMedium: TextStyle(
+            fontSize: 20,
+            fontFamily: fontFamily,
+            color: CupertinoDynamicColor.withBrightness(
+              color: lightColor,
+              darkColor: darkColor,
+            )),
         titleMedium: TextStyle(
           fontSize: 16,
           fontFamily: fontFamily,

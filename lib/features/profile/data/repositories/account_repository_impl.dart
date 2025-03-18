@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:eagri_pro/features/auth/data/models/user_model.dart';
@@ -27,6 +29,7 @@ class AccountRepositoryImpl implements AccountRepository {
     if (await networkInfo.isConnected) {
       try {
         final response = await remoteDataSource.getAccount();
+        inspect(response);
         await store.saveData(response);
         return Right(response);
       } catch (e) {

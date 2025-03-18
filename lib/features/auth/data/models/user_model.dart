@@ -41,7 +41,7 @@ class Location {
   final String name;
 
   Location({
-    required this.id,
+    this.id,
     required this.name,
   });
 
@@ -63,13 +63,13 @@ class User {
   final String lastName;
   final String gender;
   final String title;
-  final String typeUser;
+  final String? typeUser;
   final String phone;
   final String avatar;
   final String address;
   final DateTime birthDate;
   final Account account;
-  final Organism organism;
+  // final Organism? organism;
 
   User({
     required this.id,
@@ -78,13 +78,13 @@ class User {
     required this.lastName,
     required this.gender,
     required this.title,
-    required this.typeUser,
+    this.typeUser,
     required this.phone,
     required this.avatar,
     required this.address,
     required this.birthDate,
     required this.account,
-    required this.organism,
+    //  this.organism,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -100,7 +100,7 @@ class User {
         address: json["address"],
         birthDate: DateTime.parse(json["birthDate"]),
         account: Account.fromJson(json["account"]),
-        organism: Organism.fromJson(json["organism"]),
+        // organism: json["organism"] == null ? null : Organism.fromJson(json["organism"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -116,20 +116,48 @@ class User {
         "address": address,
         "birthDate": birthDate.toIso8601String(),
         "account": account.toJson(),
-        "organism": organism.toJson(),
+        // "organism": organism!.toJson(),
+      };
+}
+
+class TypeUser {
+  final int id;
+  final String? name;
+  final String? description;
+  final String? referredType;
+
+  TypeUser({
+    required this.id,
+    this.name,
+    this.description,
+    this.referredType,
+  });
+
+  factory TypeUser.fromJson(Map<String, dynamic> json) => TypeUser(
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        referredType: json["referredType"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "description": description,
+        "referredType": referredType,
       };
 }
 
 class Account {
   final DateTime createdAt;
   final bool deleted;
-  final dynamic deletedAt;
-  final dynamic updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? updatedAt;
   final int id;
   final String username;
   final String phone;
   final String name;
-  final String typeAccount;
+  final TypeUser typeAccount;
   final bool isEnabled;
   final List<dynamic> groups;
   final bool hasLoggedInOnce;
@@ -148,8 +176,8 @@ class Account {
   Account({
     required this.createdAt,
     required this.deleted,
-    required this.deletedAt,
-    required this.updatedAt,
+    this.deletedAt,
+    this.updatedAt,
     required this.id,
     required this.username,
     required this.phone,
@@ -174,15 +202,19 @@ class Account {
   factory Account.fromJson(Map<String, dynamic> json) => Account(
         createdAt: DateTime.parse(json["createdAt"]),
         deleted: json["deleted"],
-        deletedAt: json["deletedAt"],
-        updatedAt: json["updatedAt"],
+        deletedAt: json["deletedAt"] == null
+            ? null
+            : DateTime.parse(json["deletedAt"]),
+        updatedAt: json["updatedAt"] == null
+            ? null
+            : DateTime.parse(json["updatedAt"]),
         id: json["id"],
         username: json["username"],
         phone: json["phone"],
         name: json["name"],
-        typeAccount: json["typeAccount"],
+        typeAccount: TypeUser.fromJson(json["accountType"]),
         isEnabled: json["isEnabled"],
-        groups: List<dynamic>.from(json["groups"].map((x) => x)),
+        groups: json["groups"] == null ? [] : List<dynamic>.from(json["groups"].map((x) => x)),
         hasLoggedInOnce: json["hasLoggedInOnce"],
         itsHerFirstConnection: json["itsHerFirstConnection"],
         firstLoginDate: DateTime.parse(json["firstLoginDate"]),

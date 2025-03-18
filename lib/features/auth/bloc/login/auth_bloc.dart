@@ -43,18 +43,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
             errorMessage: failure.errorMessage,
             status: AuthenticationStatus.unauthenticated));
       }, (user) async {
-        if (user.typeAccount != "AGENT_RELAIS") {
-          emit(state.copyWith(
-              stateStatus: Status.error,
-              errorMessage:
-                  "Vous n'avez pas le droit d'accéder à cette application",
-              status: AuthenticationStatus.unauthenticated));
-        }
         emit(state.copyWith(
-            stateStatus: Status.success,
-            user: user,
-            status: AuthenticationStatus.authenticated));
-        // add(SendRequestRegistrationTokenEvent(userName: event.username));
+            user: user));
         add(GetAccountEvent());
       });
     });
@@ -86,7 +76,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
             errorMessage: failure.errorMessage,
             status: AuthenticationStatus.unauthenticated));
       }, (user) {
-        emit(AuthState(status: AuthenticationStatus.unauthenticated));
+        emit(const AuthState(status: AuthenticationStatus.unauthenticated));
       });
     });
     on<GetAccountEvent>((event, emit) async {
@@ -96,6 +86,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
           emit(state.copyWith(status: AuthenticationStatus.unauthenticated));
         }, (user) {
           emit(state.copyWith(
+              stateStatus: Status.success,
               account: user, status: AuthenticationStatus.authenticated));
         });
       } catch (e) {

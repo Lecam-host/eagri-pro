@@ -11,6 +11,5 @@ mixin AuthMixin on State<AuthPage> {
     super.dispose();
     phoneNumberTextEditingController.dispose();
     passwordTextEditingController.dispose();
-    super.dispose();
   }
 }

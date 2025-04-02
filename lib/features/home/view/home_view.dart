@@ -1,6 +1,5 @@
 import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/core/utils/router/routes.dart';
-import 'package:eagri_pro/features/order/views/last_order_section.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +30,13 @@ class _HomeViewState extends State<HomeView> {
       'icon': Icons.local_shipping_outlined,
       'type': 'delivery',
       'route': Routes.orders.name,
+    },
+    {
+      'title': 'Produits',
+      'subtitle': 'Publier un produit',
+      'icon': Icons.production_quantity_limits,
+      'type': 'products',
+      'route': Routes.selectClient.name,
     },
     // {
     //   'title': 'Commandes',
@@ -200,6 +206,8 @@ class _HomeViewState extends State<HomeView> {
         return ColorConstants.blueColor;
       case 'inventory':
         return Colors.orange;
+      case 'products':
+        return Colors.purple;
       default:
         return Colors.grey;
     }

@@ -13,7 +13,9 @@
     "see_all": "See All",
     "help": "Help",
     "about": "About",
+    "no_client_found": "No client found",
     "contact": "Contact",
     "terms": "Terms of Service",
+    "select_a_customer": "Select a customer",
     "privacy": "Privacy Policy"
 }

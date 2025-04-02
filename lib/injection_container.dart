@@ -20,6 +20,11 @@ import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/registration_token_usecase.dart';
 import 'features/auth/domain/usecases/reset_password_usecase.dart';
+import 'features/client/data/datasources/client_remote_data_source.dart';
+import 'features/client/data/repository/client_repository_impl.dart';
+import 'features/client/domain/repositories/client_repository.dart';
+import 'features/client/domain/usecases/search_clients_usecase.dart';
+import 'features/client/presentation/cubit/client_cubit.dart';
 import 'features/order/cubit/order_cubit.dart';
 import 'features/order/data/datasources/order_remote_data_source.dart';
 import 'features/order/data/repositories/order_repository_impl.dart';
@@ -119,5 +124,19 @@ Future<void> configureDependencies() async {
   di.registerLazySingleton(() => ValidateDeliveryUsecase(orderRepository: di()));
   di.registerLazySingleton(() => GetOrderDeliveryByQrUsecase(orderRepository: di()));
   di.registerLazySingleton(() => OrderCubit(getOrdersUsecase: di(), getDeliveryByIdUsecase: di(), validateDeliveryUsecase: di(), getOrderDeliveryByQrUsecase: di()));
+
+
+  // *************************** CLIENT REPOSITORY ***************************
+  di.registerLazySingleton<ClientRepository>(() => ClientRepositoryImpl(
+        networkInfo: di(),
+        clientRemoteDataSource: di(),
+      ));
+  // CLIENT REMOTE DATA SOURCE
+  di.registerLazySingleton<ClientRemoteDataSource>(
+      () => ClientRemoteDataSourceImpl(httpHelper: di()));
+
+  // CLIENT USECASE
+  di.registerLazySingleton(() => SearchClientsUsecase(clientRepository: di()));
+  di.registerLazySingleton(() => ClientCubit(searchClientsUsecase: di()));
   
 }

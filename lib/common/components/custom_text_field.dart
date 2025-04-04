@@ -54,6 +54,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             onSubmitted: (value) {
               widget.onSubmitted != null ? widget.onSubmitted!(value) : null;
             },
+            
             obscureText: isObscureText,
             suffix: suffixWidget(),
             placeholder: widget.placeholder,

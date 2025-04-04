@@ -10,6 +10,7 @@ abstract class LocaleKeys {
   static const my_orders = 'my_orders';
   static const no_client_found = 'no_client_found';
   static const select_a_customer = 'select_a_customer';
+  static const search_client = 'search_client';
   static const last_orders = 'last_orders';
   static const settings = 'settings';
   static const theme = 'theme';

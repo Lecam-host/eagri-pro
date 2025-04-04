@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:eagri_pro/common/components/custom_text_field.dart';
+import 'package:eagri_pro/common/widgets/message_banner.dart';
 import 'package:eagri_pro/features/client/data/models/client_model.dart';
 import 'package:eagri_pro/features/client/presentation/cubit/client_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -53,6 +54,7 @@ class _SeletedClientViewState extends State<SeletedClientView> {
             CustomTextField(
               onChanged: _onSearchChanged,
               prefixIcon: Icons.search,
+              placeholder: LocaleKeys.search_client.tr(),
             ),
             const SizedBox(height: 10),
             Expanded(
@@ -65,7 +67,9 @@ class _SeletedClientViewState extends State<SeletedClientView> {
                   }
                   if (state.status == Status.error) {
                     return Center(
-                      child: Text(state.message ?? ''),
+                      child: MessageBanner(
+                          message: state.message ?? '',
+                          type: MessageType.error),
                     );
                   }
                   if (state.status == Status.success && state.clients.isEmpty) {

@@ -3,9 +3,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/color_constants.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
+  final Widget? child;
 
-  const AppBarCustom({super.key, required this.title});
+  const AppBarCustom({super.key,  this.title, this.child});
 
   @override
   Size get preferredSize =>
@@ -22,8 +23,8 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
         ),
         onPressed: () => context.pop(),
       ),
-      title: Text(
-        title,
+      title: child ?? Text(
+        title ?? '',
         style: const TextStyle(color: Colors.white),
       ),
     );

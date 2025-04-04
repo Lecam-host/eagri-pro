@@ -4,6 +4,7 @@ import 'package:eagri_pro/features/order/cubit/order_cubit.dart';
 import 'package:eagri_pro/injection_container.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../features/product/presentation/cubit/product_cubit.dart';
 import '../../../features/theme/bloc/theme_bloc.dart';
 
 class CustomMultiBlocProvider extends StatelessWidget {
@@ -21,6 +22,7 @@ class CustomMultiBlocProvider extends StatelessWidget {
         BlocProvider(create: (context) => di<AuthBloc>()),
         BlocProvider(create: (context) => di<OrderCubit>()),
         BlocProvider(create: (context) => di<ClientCubit>()),
+        BlocProvider(create: (context) => di<ProductCubit>()),
       ],
       child: child,
     );

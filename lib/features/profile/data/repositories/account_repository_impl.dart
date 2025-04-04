@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:eagri_pro/features/auth/data/models/user_model.dart';
 import 'package:eagri_pro/features/auth/domain/entities/user_entity.dart';
 import '../../../../core/error/exception.dart';
@@ -27,7 +28,8 @@ class AccountRepositoryImpl implements AccountRepository {
         inspect(response);
         await store.saveData(response);
         return Right(response);
-      } catch (e) {
+      } on DioException catch (e) {
+        inspect(e);
         return Left(ServerFailure(errorMessage: e.toString()));
       }
     } else {
@@ -79,7 +81,7 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
-  Future<Either<Failure, UserModel>> getUserById(int id) async{
+  Future<Either<Failure, UserModel>> getUserById(int id) async {
     if (await networkInfo.isConnected) {
       try {
         final response = await remoteDataSource.getUserById(id);

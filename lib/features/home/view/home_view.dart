@@ -32,10 +32,10 @@ class _HomeViewState extends State<HomeView> {
       'route': Routes.orders.name,
     },
     {
-      'title': 'Produits',
-      'subtitle': 'Publier un produit',
-      'icon': Icons.production_quantity_limits,
-      'type': 'products',
+      'title': 'Client',
+      'subtitle': 'Gérer les clients',
+      'icon': Icons.group,
+      'type': 'clients',
       'route': Routes.selectClient.name,
     },
     // {
@@ -206,7 +206,7 @@ class _HomeViewState extends State<HomeView> {
         return ColorConstants.blueColor;
       case 'inventory':
         return Colors.orange;
-      case 'products':
+      case 'clients':
         return Colors.purple;
       default:
         return Colors.grey;

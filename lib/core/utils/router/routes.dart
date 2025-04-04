@@ -28,6 +28,11 @@ enum Routes {
   selectClient('select-client', 'select-client'),
   dasboardClient('dasboard-client', 'dasboard-client'),
 
+  // Feature Product Routes
+  selectedProductPage('selected-product-page', 'selected-product-page'),
+  publishFormProduct('publish-form-product', 'publish-form-product'),
+  chooseTypePublication('choose-type-publication', 'choose-type-publication'),
+
   // Onboarding
   onBoarding('/onboarding', 'onboarding'),
   splash('/splash', 'splash');

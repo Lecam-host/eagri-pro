@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:eagri_pro/features/product/data/models/params/publish_product_model.dart';
 import 'package:eagri_pro/features/product/data/models/type_product_model.dart';
 
 import '../../../../core/error/failure.dart';
@@ -12,4 +13,6 @@ abstract class ProductRepository {
       int id);
   Future<Either<Failure, List<ResultProductSearchModel>>> search(
       SearchProductArticleParams params);
+  Future<Either<Failure, bool>> publishProduct(
+      PublishProductModel data);
 }

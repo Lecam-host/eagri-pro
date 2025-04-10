@@ -40,7 +40,7 @@ class _FormWidgetState extends State<FormWidget> {
                   label: "Entrer ${widget.form![j].label}",
                   hintText: "Entrer ${widget.form![j].label}",
                   withBorder: true,
-                  maxLines: widget.form![j].maxLines,
+                  maxLines: int.parse(widget.form![j].maxLines!),
                   keyboardType:
                       getKeyBoardTypeBytype(widget.form![j].subtype ?? "text"),
                   validators: FormBuilderValidators.compose(

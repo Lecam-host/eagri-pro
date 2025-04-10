@@ -1,14 +1,12 @@
 import 'package:eagri_pro/common/components/button_custom.dart';
 import 'package:eagri_pro/common/components/custom_text_field.dart';
-import 'package:eagri_pro/common/components/upcoming_card.dart';
 import 'package:eagri_pro/common/widgets/app_bar_custom.dart';
 import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/features/client/data/models/client_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../common/components/basic_card_custom.dart';
+import '../../../core/utils/router/routes.dart';
 
 class DasboardClientView extends StatelessWidget {
   final ClientModel client;
@@ -69,13 +67,16 @@ class DasboardClientView extends StatelessWidget {
                   title: "Products",
                   subtitle: "Publish products",
                   icon: Icons.production_quantity_limits,
-                  onTap: () => showDialogChooseMethodScan(context),
+                  onTap: () =>
+                      context.pushNamed(Routes.chooseTypePublication.name),
                 ),
                 _buildServiceItem(
-                    context: context,
-                    title: "Buy products",
-                    subtitle: "Make a request",
-                    icon: Icons.request_page_outlined),
+                  context: context,
+                  title: "Buy products",
+                  subtitle: "Make a request",
+                  icon: Icons.request_page_outlined,
+                  onTap: () => showDialogChooseMethodScan(context),
+                ),
               ],
             )
           ],

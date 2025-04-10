@@ -1,5 +1,7 @@
+import 'package:eagri_pro/features/product/data/models/params/publish_product_model.dart';
 import 'package:eagri_pro/features/product/domain/usecases/get_form_product_by_id_usecase.dart';
 import 'package:eagri_pro/features/product/domain/usecases/get_type_product_usecase.dart';
+import 'package:eagri_pro/features/product/domain/usecases/publish_product_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/enum.dart';
 import '../../../../core/utils/usecase.dart';
@@ -12,9 +14,11 @@ class ProductCubit extends Cubit<ProductState> {
   final GetTypeProductUsecase getTypeProductUsecase;
   final SearchArticleProductUsecase searchArticleProductUsecase;
   final GetFormProductByIdUsecase getFormProductByIdUsecase;
+  final PublishProductUsecase publishProductUsecase;
   ProductCubit(
       {required this.getTypeProductUsecase,
       required this.getFormProductByIdUsecase,
+      required this.publishProductUsecase,
       required this.searchArticleProductUsecase})
       : super(ProductInitial());
 
@@ -73,6 +77,23 @@ class ProductCubit extends Cubit<ProductState> {
       emit(state.copyWith(
           isLoading: false, errorMessage: e.toString(), status: Status.error));
       return [];
+    }
+  }
+
+  Future<void> publishProduct(PublishProductModel data) async {
+    try {
+      emit(state.copyWith(status: Status.loading));
+      final result = await publishProductUsecase.call(data);
+      result.fold((failure) {
+        emit(state.copyWith(
+            errorMessage: failure.errorMessage,
+            isLoading: false,
+            status: Status.error));
+      }, (isSuccess) {
+        emit(state.copyWith(status: Status.success));
+      });
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString(), status: Status.error));
     }
   }
 

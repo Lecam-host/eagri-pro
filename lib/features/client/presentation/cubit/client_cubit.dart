@@ -26,4 +26,8 @@ class ClientCubit extends Cubit<ClientState> {
           clients: clients, status: Status.success, message: '')),
     );
   }
+
+  Future<void> selectClient(ClientModel client) async {
+    emit(state.copyWith(clientSelected: client));
+  }
 }

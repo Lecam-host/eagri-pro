@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:eagri_pro/core/error/failure.dart';
+import 'package:eagri_pro/features/product/data/models/params/publish_product_model.dart';
 import 'package:eagri_pro/features/product/data/models/params/search_product_article_params.dart';
 import 'package:eagri_pro/features/product/data/models/result_product_search_model.dart';
 import 'package:eagri_pro/features/product/data/models/type_product_model.dart';
@@ -50,6 +51,20 @@ class ProductRepositoryImpl implements ProductRepository {
     if (await networkInfo.isConnected) {
       try {
         final response = await productRemoteDataSource.search(params);
+        return Right(response);
+      } catch (e) {
+        return Left(ServerFailure(errorMessage: e.toString()));
+      }
+    } else {
+      return const Left(ServerFailure(errorMessage: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> publishProduct(PublishProductModel data) async{
+    if (await networkInfo.isConnected) {
+      try {
+        final response = await productRemoteDataSource.publishProduct(data);
         return Right(response);
       } catch (e) {
         return Left(ServerFailure(errorMessage: e.toString()));

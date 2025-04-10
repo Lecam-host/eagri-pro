@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import 'text_field_custom.dart';
 
-
 class DatePickerCustom extends StatelessWidget {
   final String label;
   final String? name;
@@ -30,7 +29,7 @@ class DatePickerCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormBuilderField(
-      name: label,
+      name: name ?? "name",
       validator: (value) {
         return validators!(value);
       },

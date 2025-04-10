@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:eagri_pro/common/components/custom_text_field.dart';
 import 'package:eagri_pro/common/widgets/message_banner.dart';
 import 'package:eagri_pro/features/client/data/models/client_model.dart';
@@ -9,7 +7,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../common/widgets/app_bar_custom.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/enum.dart';
@@ -84,9 +81,11 @@ class _SeletedClientViewState extends State<SeletedClientView> {
                     itemBuilder: (context, index) {
                       final client = state.clients[index];
                       return InkWell(
-                          onTap: () => context.pushNamed(
-                              Routes.dasboardClient.path,
-                              extra: {"client": client}),
+                          onTap: () {
+                            context.read<ClientCubit>().selectClient(client);
+                            context.pushNamed(Routes.dasboardClient.path,
+                                extra: {"client": client});
+                          },
                           child: ClientCard(client: client));
                     },
                   );

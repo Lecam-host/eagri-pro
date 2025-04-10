@@ -37,7 +37,7 @@ class DataFormulaireModel {
   String type;
   String label;
   List<Rule> rules;
-  int? maxLines;
+  String? maxLines;
   String? subtype;
   dynamic position;
   String placeholder;
@@ -54,7 +54,7 @@ class DataFormulaireModel {
     required this.placeholder,
     this.condition,
     this.options,
-    this.maxLines = 1,
+    this.maxLines = "1",
   });
 
   factory DataFormulaireModel.fromJson(Map<String, dynamic> json) =>
@@ -66,7 +66,7 @@ class DataFormulaireModel {
         subtype: json["subtype"],
         position: json["position"],
         placeholder: json["placeholder"],
-        maxLines: json["maxLines"],
+        maxLines: json["maxLines"] == null ? "1" : json["maxLines"].toString(),
         condition: json["conditions"] == null
             ? []
             : List<Condition>.from(

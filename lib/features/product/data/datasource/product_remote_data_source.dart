@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
+import 'package:eagri_pro/core/error/failure.dart';
 import 'package:eagri_pro/features/product/data/models/type_product_model.dart';
 import 'package:eagri_pro/packages/models/formulaire_model.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/http/http_helper.dart';
+import '../models/params/publish_product_model.dart';
 import '../models/params/search_product_article_params.dart';
 import '../models/result_product_search_model.dart';
 
@@ -12,6 +16,7 @@ abstract class ProductRemoteDataSource {
   Future<List<DataFormulaireModel>> getFormByProductById(int id);
   Future<List<ResultProductSearchModel>> search(
       SearchProductArticleParams params);
+  Future<bool> publishProduct(PublishProductModel data);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -37,9 +42,10 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final response = await httpHelper.post(
           '${ConstantUrl.msArticle}/products/forms',
           data: {"productId": id});
-      return (response.data["data"] as List)
+      final result = (response.data["data"] as List)
           .map((e) => DataFormulaireModel.fromJson(e))
           .toList();
+      return result;
     } on DioException catch (e) {
       throw Exception(e.response?.data['statusMessage']);
     }
@@ -61,6 +67,25 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> publishProduct(PublishProductModel data) async {
+    final dataJson = await data.toJson();
+    final dataFormData = FormData.fromMap(dataJson);
+    try {
+      final response = await httpHelper.post(
+          "${ConstantUrl.msCatalogue}/publications/create",
+          data: dataFormData);
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        throw ServerFailure(errorMessage: response.data['statusMessage']);
+      }
+    } on DioException catch (e) {
+      inspect(e);
+      throw ServerFailure(errorMessage: e.response?.data['statusMessage'] ?? e.message);
     }
   }
 }

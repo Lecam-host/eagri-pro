@@ -44,6 +44,7 @@ import 'features/product/data/repositories/product_repository_impl.dart';
 import 'features/product/domain/repositories/product_repository.dart';
 import 'features/product/domain/usecases/get_form_product_by_id_usecase.dart';
 import 'features/product/domain/usecases/get_type_product_usecase.dart';
+import 'features/product/domain/usecases/publish_product_usecase.dart';
 import 'features/product/domain/usecases/search_article_product_usecase.dart';
 import 'features/product/presentation/cubit/product_cubit.dart';
 import 'features/profile/data/datasoucres/account_local_data_source.dart';
@@ -169,6 +170,7 @@ Future<void> configureDependencies() async {
   di.registerLazySingleton(() => ProductCubit(
       getFormProductByIdUsecase: di(),
       getTypeProductUsecase: di(),
+      publishProductUsecase: di(),
       searchArticleProductUsecase: di()));
 
   // PRODUCT USECASE
@@ -178,6 +180,8 @@ Future<void> configureDependencies() async {
       () => GetFormProductByIdUsecase(productRepository: di()));
   di.registerLazySingleton(
       () => SearchArticleProductUsecase(productRepository: di()));
+  di.registerLazySingleton(
+      () => PublishProductUsecase(productRepository: di()));
 
   // ************************* PAYMENT REPOSITORY ***************************
   di.registerLazySingleton<PaymentRepository>(() => PaymentRepositoryImpl(

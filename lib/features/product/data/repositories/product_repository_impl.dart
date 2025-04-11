@@ -61,13 +61,13 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> publishProduct(PublishProductModel data) async{
+  Future<Either<Failure, bool>> publishProduct(PublishProductModel data) async {
     if (await networkInfo.isConnected) {
       try {
         final response = await productRemoteDataSource.publishProduct(data);
         return Right(response);
-      } catch (e) {
-        return Left(ServerFailure(errorMessage: e.toString()));
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(errorMessage: e.errorMessage));
       }
     } else {
       return const Left(ServerFailure(errorMessage: 'No internet connection'));

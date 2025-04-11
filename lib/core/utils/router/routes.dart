@@ -16,6 +16,7 @@ enum Routes {
 
   // Feature Routes
   orders('/orders', 'orders'),
+  product('/product', 'product'),
   detailsOrders('/details-orders', 'details-orders'),
   cart('/cart', 'cart'),
   favorites('/favorites', 'favorites'),
@@ -23,6 +24,14 @@ enum Routes {
   settings('/settings', 'settings'),
   deliverySuccess('/delivery-success', 'delivery-success'),
   deliveryFailure('/delivery-failure', 'delivery-failure'),
+  // Feature Client Routes
+  selectClient('select-client', 'select-client'),
+  dasboardClient('dasboard-client', 'dasboard-client'),
+
+  // Feature Product Routes
+  selectedProductPage('selected-product-page', 'selected-product-page'),
+  publishFormProduct('publish-form-product', 'publish-form-product'),
+  chooseTypePublication('choose-type-publication', 'choose-type-publication'),
 
   // Onboarding
   onBoarding('/onboarding', 'onboarding'),

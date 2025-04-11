@@ -4,6 +4,7 @@ import '../../generated/locale_keys.g.dart';
 
 class AppConstants {
   static final DateFormat dateformat = DateFormat('dd.MM.yyyy');
+  static const String appName = "MOBILE-PRO";
   static final DateTime nullDate =
       DateTime.parse("0001-01-01T00:00:00Z").toUtc();
   static final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');

@@ -9,7 +9,7 @@ import '../../features/theme/bloc/theme_bloc.dart';
 import '../../features/theme/bloc/theme_state.dart';
 
 class CustomTextField extends StatefulWidget {
-  final TextEditingController textEditingController;
+  final TextEditingController? controller;
   final bool enabled;
   final Widget? suffix;
   final String? placeholder;
@@ -17,10 +17,11 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final IconData? prefixIcon;
   final bool obscureText;
+  final ValueChanged<String>? onChanged;
   final void Function(String)? onSubmitted;
   const CustomTextField({
     super.key,
-    required this.textEditingController,
+    this.controller,
     this.enabled = true,
     this.suffix,
     this.placeholder,
@@ -28,6 +29,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputAction = TextInputAction.next,
     this.prefixIcon,
     this.obscureText = false,
+    this.onChanged,
     this.onSubmitted,
   });
 
@@ -48,54 +50,57 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         return CupertinoTextField(
-          controller: widget.textEditingController,
-          onSubmitted: (value) {
-            widget.onSubmitted != null ? widget.onSubmitted!(value) : null;
-          },
-          obscureText: isObscureText,
-          suffix: suffixWidget(),
-          placeholder: widget.placeholder,
-          textInputAction: widget.textInputAction,
-          keyboardType: widget.keyboardType,
-          padding: const EdgeInsets.all(10),
-          style: const TextStyle(
-            color: CupertinoDynamicColor.withBrightness(
-              color: CupertinoColors.black,
-              darkColor: CupertinoColors.white,
-            ),
-          ),
-          enabled: widget.enabled,
-          prefix: widget.prefixIcon != null
-              ? CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: null,
-                  child: Icon(
-                    widget.prefixIcon,
-                    color: themeState.isDark
-                        ? ColorConstants.darkPrimaryIcon
-                        : ColorConstants.lightPrimaryIcon,
-                  ),
-                )
-              : null,
-          decoration: BoxDecoration(
-            color: CupertinoDynamicColor.withBrightness(
-              color: ColorConstants.lightTextField,
-              darkColor: ColorConstants.darkTextField,
-            ),
-            border: Border.all(
+            controller: widget.controller,
+            onSubmitted: (value) {
+              widget.onSubmitted != null ? widget.onSubmitted!(value) : null;
+            },
+            
+            obscureText: isObscureText,
+            suffix: suffixWidget(),
+            placeholder: widget.placeholder,
+            textInputAction: widget.textInputAction,
+            keyboardType: widget.keyboardType,
+            padding: const EdgeInsets.all(10),
+            style: const TextStyle(
               color: CupertinoDynamicColor.withBrightness(
-                color: ColorConstants.lightBackgroundColorActivated,
-                darkColor: ColorConstants.darkBackgroundColorActivated,
+                color: CupertinoColors.black,
+                darkColor: CupertinoColors.white,
               ),
-              width: 0.5,
             ),
-            borderRadius: const BorderRadius.all(
-                Radius.circular(AppConstants.borderRadius)),
-          ),
-          cursorColor: themeState.isDark
-              ? ColorConstants.darkPrimaryIcon
-              : ColorConstants.lightPrimaryIcon,
-        );
+            enabled: widget.enabled,
+            prefix: widget.prefixIcon != null
+                ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: null,
+                    child: Icon(
+                      widget.prefixIcon,
+                      color: themeState.isDark
+                          ? ColorConstants.darkPrimaryIcon
+                          : ColorConstants.lightPrimaryIcon,
+                    ),
+                  )
+                : null,
+            decoration: BoxDecoration(
+              color: CupertinoDynamicColor.withBrightness(
+                color: ColorConstants.lightTextField,
+                darkColor: ColorConstants.darkTextField,
+              ),
+              border: Border.all(
+                color: CupertinoDynamicColor.withBrightness(
+                  color: ColorConstants.lightBackgroundColorActivated,
+                  darkColor: ColorConstants.darkBackgroundColorActivated,
+                ),
+                width: 0.5,
+              ),
+              borderRadius: const BorderRadius.all(
+                  Radius.circular(AppConstants.borderRadius)),
+            ),
+            cursorColor: themeState.isDark
+                ? ColorConstants.darkPrimaryIcon
+                : ColorConstants.lightPrimaryIcon,
+            onChanged: (value) {
+              widget.onChanged != null ? widget.onChanged!(value) : null;
+            });
       },
     );
   }

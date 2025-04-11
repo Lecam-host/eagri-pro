@@ -20,6 +20,14 @@ import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/registration_token_usecase.dart';
 import 'features/auth/domain/usecases/reset_password_usecase.dart';
+import 'features/client/data/datasources/client_remote_data_source.dart';
+import 'features/client/data/repository/client_repository_impl.dart';
+import 'features/client/domain/repositories/client_repository.dart';
+import 'features/client/domain/usecases/search_clients_usecase.dart';
+import 'features/client/presentation/cubit/client_cubit.dart';
+import 'features/configuration/data/datasources/configuration_remote_data_source.dart';
+import 'features/configuration/data/repositories/configuration_repository_impl.dart';
+import 'features/configuration/domain/repositories/configuration.repository.dart';
 import 'features/order/cubit/order_cubit.dart';
 import 'features/order/data/datasources/order_remote_data_source.dart';
 import 'features/order/data/repositories/order_repository_impl.dart';
@@ -27,6 +35,18 @@ import 'features/order/domain/repositories/order_repository.dart';
 import 'features/order/domain/usecases/get_delivery_by_id_usecase.dart';
 import 'features/order/domain/usecases/get_order_delivery_by_qr_usecase.dart';
 import 'features/order/domain/usecases/validate_delivery_usecase.dart';
+import 'features/payment/data/datasources/payment_data_source.dart';
+import 'features/payment/data/repositories/payment_repository_impl.dart';
+import 'features/payment/domain/repositories/payment_repository.dart';
+import 'features/payment/domain/usecases/payment_usecase.dart';
+import 'features/product/data/datasource/product_remote_data_source.dart';
+import 'features/product/data/repositories/product_repository_impl.dart';
+import 'features/product/domain/repositories/product_repository.dart';
+import 'features/product/domain/usecases/get_form_product_by_id_usecase.dart';
+import 'features/product/domain/usecases/get_type_product_usecase.dart';
+import 'features/product/domain/usecases/publish_product_usecase.dart';
+import 'features/product/domain/usecases/search_article_product_usecase.dart';
+import 'features/product/presentation/cubit/product_cubit.dart';
 import 'features/profile/data/datasoucres/account_local_data_source.dart';
 import 'features/profile/data/datasoucres/account_remote_datasource.dart';
 import 'features/profile/data/repositories/account_repository_impl.dart';
@@ -64,10 +84,10 @@ Future<void> configureDependencies() async {
   di.registerLazySingleton<AccountLocalDataSource>(
       () => AccountLocalDataSourceImpl(sharedPreferences: di()));
   // ACCOUNT USECASE
-  di.registerLazySingleton(() => GetCurrentUserUsecase(accountRepository: di()));
+  di.registerLazySingleton(
+      () => GetCurrentUserUsecase(accountRepository: di()));
   di.registerLazySingleton(() => GetAccountUsecase(accountRepository: di()));
   di.registerLazySingleton(() => GetUserByIdUsecase(accountRepository: di()));
-
 
   //***************************  AUTH REPOSITORY ***************************
   di.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
@@ -90,8 +110,7 @@ Future<void> configureDependencies() async {
       checkAuthUsecase: di(),
       getUserByIdUsecase: di(),
       logoutUsecase: di(),
-      getAccountUsecase: di()
-      ));
+      getAccountUsecase: di()));
   // di.registerFactory(() => ForgotPasswordCubit(
   //     forgotPasswordUsecase: di(), resetPasswordUsecase: di()));
   di.registerLazySingleton(() => LoginUsecase(authRepository: di()));
@@ -103,7 +122,6 @@ Future<void> configureDependencies() async {
   di.registerLazySingleton(
       () => RegistrationTokenUsecase(authRepository: di()));
 
-
   // ORDER REPOSITORY
   di.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(
         networkInfo: di(),
@@ -112,12 +130,79 @@ Future<void> configureDependencies() async {
   // ORDER REMOTE DATA SOURCE
   di.registerLazySingleton<OrderRemoteDataSource>(
       () => OrderRemoteDataSourceImpl(httpHelper: di()));
-  
+
   // ORDER USECASE
   di.registerLazySingleton(() => GetOrdersUsecase(orderRepository: di()));
   di.registerLazySingleton(() => GetDeliveryByIdUsecase(orderRepository: di()));
-  di.registerLazySingleton(() => ValidateDeliveryUsecase(orderRepository: di()));
-  di.registerLazySingleton(() => GetOrderDeliveryByQrUsecase(orderRepository: di()));
-  di.registerLazySingleton(() => OrderCubit(getOrdersUsecase: di(), getDeliveryByIdUsecase: di(), validateDeliveryUsecase: di(), getOrderDeliveryByQrUsecase: di()));
-  
+  di.registerLazySingleton(
+      () => ValidateDeliveryUsecase(orderRepository: di()));
+  di.registerLazySingleton(
+      () => GetOrderDeliveryByQrUsecase(orderRepository: di()));
+  di.registerLazySingleton(() => OrderCubit(
+      getOrdersUsecase: di(),
+      getDeliveryByIdUsecase: di(),
+      validateDeliveryUsecase: di(),
+      getOrderDeliveryByQrUsecase: di()));
+
+  // *************************** CLIENT REPOSITORY ***************************
+  di.registerLazySingleton<ClientRepository>(() => ClientRepositoryImpl(
+        networkInfo: di(),
+        clientRemoteDataSource: di(),
+      ));
+  // CLIENT REMOTE DATA SOURCE
+  di.registerLazySingleton<ClientRemoteDataSource>(
+      () => ClientRemoteDataSourceImpl(httpHelper: di()));
+
+  // CLIENT USECASE
+  di.registerLazySingleton(() => SearchClientsUsecase(clientRepository: di()));
+  di.registerLazySingleton(() => ClientCubit(searchClientsUsecase: di()));
+
+  // *************************** PRODUCT REPOSITORY ***************************
+  di.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(
+        networkInfo: di(),
+        productRemoteDataSource: di(),
+      ));
+  // PRODUCT REMOTE DATA SOURCE
+  di.registerLazySingleton<ProductRemoteDataSource>(
+      () => ProductRemoteDataSourceImpl(httpHelper: di()));
+
+  // PRODUCT CUBIT
+  di.registerLazySingleton(() => ProductCubit(
+      getFormProductByIdUsecase: di(),
+      getTypeProductUsecase: di(),
+      publishProductUsecase: di(),
+      searchArticleProductUsecase: di()));
+
+  // PRODUCT USECASE
+  di.registerLazySingleton(
+      () => GetTypeProductUsecase(productRepository: di()));
+  di.registerLazySingleton(
+      () => GetFormProductByIdUsecase(productRepository: di()));
+  di.registerLazySingleton(
+      () => SearchArticleProductUsecase(productRepository: di()));
+  di.registerLazySingleton(
+      () => PublishProductUsecase(productRepository: di()));
+
+  // ************************* PAYMENT REPOSITORY ***************************
+  di.registerLazySingleton<PaymentRepository>(() => PaymentRepositoryImpl(
+        networkInfo: di(),
+        remoteDataSource: di(),
+      ));
+  // PAYMENT REMOTE DATA SOURCE
+  di.registerLazySingleton<PaymentRemoteDataSource>(
+      () => PaymentRemoteDataSourceImpl(httpHelper: di()));
+
+  // PAYMENT USECASE
+  di.registerLazySingleton(() => PaymentUsecase(repository: di()));
+
+  // ************************* CONFIGURATION REPOSITORY ***************************
+  di.registerLazySingleton<ConfigurationRepository>(() => ConfigurationRepositoryImpl(
+        networkInfo: di(),
+        configurationRemoteDatasource: di(),
+      ));
+  // CONFIGURATION REMOTE DATA SOURCE
+  di.registerLazySingleton<ConfigurationRemoteDataSource>(
+      () => ConfigurationRemoteDataSourceImpl(httpHelper: di()));
+
+  // CONFIGURATION USECASE
 }

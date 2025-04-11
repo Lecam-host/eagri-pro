@@ -45,7 +45,7 @@ class Customer {
   final String phone;
   final String? email;
   final String? whatsAppId;
-  final String typeAccount;
+  final String? typeAccount;
 
   Customer({
     required this.id,
@@ -54,7 +54,7 @@ class Customer {
     required this.phone,
     this.email,
     this.whatsAppId,
-    required this.typeAccount,
+    this.typeAccount,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) => Customer(

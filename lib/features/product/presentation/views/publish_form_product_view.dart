@@ -7,6 +7,7 @@ import 'package:eagri_pro/common/helpers/image_upload_controller.dart';
 import 'package:eagri_pro/common/widgets/app_bar_custom.dart';
 import 'package:eagri_pro/common/widgets/images_upload_wrap.dart';
 import 'package:eagri_pro/common/widgets/multi_selecte_custom.dart';
+import 'package:eagri_pro/core/utils/router/routes.dart';
 import 'package:eagri_pro/features/auth/bloc/login/auth_bloc.dart';
 import 'package:eagri_pro/features/configuration/presentation/select_location/select_location_widget.dart';
 import 'package:eagri_pro/features/product/data/models/params/publish_product_model.dart';
@@ -17,10 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
-
+import 'package:go_router/go_router.dart';
+import '../../../../common/components/message_dialog_dart.dart';
 import '../../../../common/components/tag_custom.dart';
 import '../../../../common/widgets/card_image_upload.dart';
-import '../../../../common/widgets/message_banner.dart';
 import '../../../../core/utils/enum.dart';
 import '../../../../packages/models/formulaire_model.dart';
 import '../../../client/presentation/cubit/client_cubit.dart';
@@ -123,9 +124,10 @@ class _PublishFormProductViewState extends State<PublishFormProductView> {
                         paymentMethodIds = value;
                       });
                     },
-                    items: paymentController.paymentOptions
-                        .map((e) =>
-                            DropdownItem(value: e.id.toString(), name: e.name))
+                    items: paymentController.listPaymentMethod
+                        .map((e) => DropdownItem(
+                            value: e.paymentMethod!.id.toString(),
+                            name: e.paymentMethod!.name))
                         .toList()),
                 SelectLocationWidget(onChanged: (value) {
                   setState(() {
@@ -134,7 +136,7 @@ class _PublishFormProductViewState extends State<PublishFormProductView> {
                 }),
                 ButtonCustom(
                     label: "Publier",
-                    onPressed: () {
+                    onPressed: () async {
                       inspect(formKey.currentState!.value);
                       if (formKey.currentState!.saveAndValidate()) {
                         final dataValues = [
@@ -154,7 +156,7 @@ class _PublishFormProductViewState extends State<PublishFormProductView> {
                               .map((e) => e.path)
                               .toList(),
                           localisation: LocationPublishProduct(
-                              departmentId: location!.departement!.id,
+                              departmentId: location!.departement?.id,
                               localityId: location!.locality?.id,
                               regionId: location!.region?.id,
                               subPrefectureId: location!.sousPrefecture?.id),
@@ -164,11 +166,31 @@ class _PublishFormProductViewState extends State<PublishFormProductView> {
                               .toList(),
                         );
                         inspect(data);
-                        context.read<ProductCubit>().publishProduct(data);
-                      } else {
-                        SnackBarCustom.show(
-                            context: context,
-                            message: "Veuillez remplir tous les champs");
+                        final result = await context
+                            .read<ProductCubit>()
+                            .publishProduct(data);
+                        if (result) {
+                          MessageDialog.show(
+                              title: "Publier le produit",
+                              context: context,
+                              type: MessageType.success,
+                              onConfirm: () => context.goNamed(
+                                      Routes.dasboardClient.name,
+                                      extra: {
+                                        "client": context
+                                            .read<ClientCubit>()
+                                            .state
+                                            .clientSelected
+                                      }),
+                              message: "Le produit a bien été publier");
+                        } else {
+                          MessageDialog.show(
+                              title: "Publier le produit",
+                              type: MessageType.error,
+                              context: context,
+                              onConfirm: () => Navigator.of(context).pop(),
+                              message: "Une erreur est survenue");
+                        }
                       }
                     },
                     isLoading: state.status == Status.loading),

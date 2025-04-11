@@ -80,20 +80,23 @@ class ProductCubit extends Cubit<ProductState> {
     }
   }
 
-  Future<void> publishProduct(PublishProductModel data) async {
+  Future<bool> publishProduct(PublishProductModel data) async {
     try {
       emit(state.copyWith(status: Status.loading));
       final result = await publishProductUsecase.call(data);
-      result.fold((failure) {
+     return result.fold((failure) {
         emit(state.copyWith(
             errorMessage: failure.errorMessage,
             isLoading: false,
             status: Status.error));
+        return false;
       }, (isSuccess) {
         emit(state.copyWith(status: Status.success));
+        return isSuccess;
       });
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString(), status: Status.error));
+      return false;
     }
   }
 

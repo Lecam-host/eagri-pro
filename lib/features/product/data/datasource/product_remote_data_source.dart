@@ -74,6 +74,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   Future<bool> publishProduct(PublishProductModel data) async {
     final dataJson = await data.toJson();
     final dataFormData = FormData.fromMap(dataJson);
+    print(dataJson);
     try {
       final response = await httpHelper.post(
           "${ConstantUrl.msCatalogue}/publications/create",
@@ -85,7 +86,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       }
     } on DioException catch (e) {
       inspect(e);
-      throw ServerFailure(errorMessage: e.response?.data['statusMessage'] ?? e.message);
+      throw ServerFailure(
+          errorMessage: e.response?.data['statusMessage'] ?? e.message);
     }
   }
 }

@@ -1,19 +1,27 @@
 import 'dart:async';
 import 'package:eagri_pro/core/utils/router/keys.dart';
+import 'package:eagri_pro/features/client/data/models/client_model.dart';
 import 'package:eagri_pro/features/home/view/scan_view.dart';
 import 'package:eagri_pro/features/home/view/service_view.dart';
 import 'package:eagri_pro/features/notification/presentation/views/notification_view.dart';
 import 'package:eagri_pro/features/order/views/details_order_view.dart';
+import 'package:eagri_pro/features/client/presentation/seleted_client_view.dart';
+import 'package:eagri_pro/features/product/presentation/views/choose_type_pulication_page.dart';
+import 'package:eagri_pro/features/product/presentation/views/publish_form_product_view.dart';
+import 'package:eagri_pro/features/product/presentation/views/selected_product_page.dart';
 import 'package:eagri_pro/features/profile/view/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../features/auth/bloc/login/auth_bloc.dart';
 import '../../../features/auth/presentation/auth_page.dart';
+import '../../../features/client/presentation/dasboard_client_view.dart';
 import '../../../features/home/view/home_view.dart';
 import '../../../features/onboarding/onboarding_screen.dart';
 import '../../../features/order/views/delivery_failure_view.dart';
 import '../../../features/order/views/delivery_success_view.dart';
+import '../../../features/product/data/models/result_product_search_model.dart';
+import '../../../features/product/data/models/type_product_model.dart';
 import '../../../features/splash/view/splash_view.dart';
 import '../../../features/order/views/order_view.dart';
 import 'router_observer.dart';
@@ -69,6 +77,71 @@ class RouterManager extends GoRouter {
                                       child: const NotificationView(),
                                       state: state)),
                               GoRoute(
+                                  path: Routes.selectClient.path,
+                                  name: Routes.selectClient.name,
+                                  pageBuilder: (context, state) => getPage(
+                                        child: const SeletedClientView(),
+                                        state: state,
+                                      ),
+                                  routes: [
+                                    GoRoute(
+                                      path: Routes.dasboardClient.path,
+                                      name: Routes.dasboardClient.name,
+                                      pageBuilder: (context, state) {
+                                        final extras = state.extra
+                                            as Map<String, dynamic>?;
+                                        final client =
+                                            extras?['client'] as ClientModel;
+                                        return getPage(
+                                          child: DasboardClientView(
+                                              client: client),
+                                          state: state,
+                                        );
+                                      },
+                                    ),
+                                    GoRoute(
+                                      path: Routes.publishFormProduct.path,
+                                      name: Routes.publishFormProduct.name,
+                                      pageBuilder: (context, state) {
+                                        final extras = state.extra
+                                            as Map<String, dynamic>?;
+                                        final productId = extras?['product']
+                                            as ResultProductSearchModel;
+                                        return getPage(
+                                          child: PublishFormProductView(
+                                              product: productId),
+                                          state: state,
+                                        );
+                                      },
+                                    ),
+                                    GoRoute(
+                                      path: Routes.chooseTypePublication.path,
+                                      name: Routes.chooseTypePublication.name,
+                                      pageBuilder: (context, state) {
+                                        return getPage(
+                                          child:
+                                              const ChooseTypePublicationPage(),
+                                          state: state,
+                                        );
+                                      },
+                                    ),
+                                    GoRoute(
+                                      path: Routes.selectedProductPage.path,
+                                      name: Routes.selectedProductPage.name,
+                                      pageBuilder: (context, state) {
+                                        final extras = state.extra
+                                            as Map<String, dynamic>?;
+                                        final type =
+                                            extras?['type'] as TypeProductModel;
+                                        return getPage(
+                                          child: SelectedProductPage(
+                                              typePublication: type),
+                                          state: state,
+                                        );
+                                      },
+                                    ),
+                                  ]),
+                              GoRoute(
                                   path: Routes.orders.path,
                                   name: Routes.orders.name,
                                   pageBuilder: (context, state) => getPage(
@@ -79,10 +152,14 @@ class RouterManager extends GoRouter {
                                         path: Routes.detailsOrders.path,
                                         name: Routes.detailsOrders.name,
                                         builder: (context, state) {
-                                          final extras = state.extra as Map<String, dynamic>?;
+                                          final extras = state.extra
+                                              as Map<String, dynamic>?;
                                           final code = extras?['code'];
-                                          final invoiceNumber = extras?['invoiceNumber'];
-                                          return DetailsOrderView(id: code, invoiceNumber: invoiceNumber);
+                                          final invoiceNumber =
+                                              extras?['invoiceNumber'];
+                                          return DetailsOrderView(
+                                              id: code,
+                                              invoiceNumber: invoiceNumber);
                                         }),
                                     GoRoute(
                                         path: Routes.deliverySuccess.path,
@@ -96,9 +173,8 @@ class RouterManager extends GoRouter {
                                         path: Routes.deliveryFailure.path,
                                         name: Routes.deliveryFailure.name,
                                         builder: (context, state) {
-                                          final args =
-                                              state.extra
-                                                  as Map<String, dynamic>?;
+                                          final args = state.extra
+                                              as Map<String, dynamic>?;
                                           return DeliveryFailureView(
                                             orderId: args?['orderId'],
                                             errorMessage: args?['errorMessage'],

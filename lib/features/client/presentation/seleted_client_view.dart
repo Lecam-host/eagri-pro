@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:eagri_pro/common/components/button_custom.dart';
 import 'package:eagri_pro/common/components/custom_text_field.dart';
 import 'package:eagri_pro/common/widgets/message_banner.dart';
 import 'package:eagri_pro/features/client/data/models/client_model.dart';
@@ -22,14 +23,15 @@ class SeletedClientView extends StatefulWidget {
 
 class _SeletedClientViewState extends State<SeletedClientView> {
   Timer? _debounce;
-
+  TextEditingController username = TextEditingController();
   void _onSearchChanged(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (value.length > 9) {
-        context.read<ClientCubit>().searchClients(value);
-      }
+      context.read<ClientCubit>().searchClients(value);
+      // if (value.length > 9) {
+
+      // }
     });
   }
 
@@ -49,7 +51,12 @@ class _SeletedClientViewState extends State<SeletedClientView> {
         child: Column(
           children: [
             CustomTextField(
-              onChanged: _onSearchChanged,
+              onChanged: (value) {
+                setState(() {
+                  username.text = value;
+                });
+              },
+              // controller: username,
               prefixIcon: Icons.search,
               placeholder: LocaleKeys.search_client.tr(),
             ),
@@ -92,6 +99,11 @@ class _SeletedClientViewState extends State<SeletedClientView> {
                 },
               ),
             ),
+            ButtonCustom(
+                label: "Rechercher",
+                onPressed: () {
+                  _onSearchChanged(username.text);
+                })
           ],
         ),
       ),
@@ -116,7 +128,7 @@ class ClientCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            CircleAvatar(),
+            const CircleAvatar(),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,5 @@
 import 'package:eagri_pro/common/components/custom_text_field.dart';
 import 'package:eagri_pro/common/widgets/message_banner.dart';
-import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/core/utils/router/routes.dart';
 import 'package:eagri_pro/features/product/data/models/type_product_model.dart';
 import 'package:flutter/material.dart';

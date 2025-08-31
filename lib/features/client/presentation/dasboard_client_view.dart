@@ -1,11 +1,11 @@
 import 'package:eagri_pro/common/components/button_custom.dart';
+import 'package:eagri_pro/common/components/circular_photo.dart';
 import 'package:eagri_pro/common/components/custom_text_field.dart';
 import 'package:eagri_pro/common/widgets/app_bar_custom.dart';
 import 'package:eagri_pro/core/constants/color_constants.dart';
 import 'package:eagri_pro/features/client/data/models/client_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../common/components/basic_card_custom.dart';
 import '../../../core/utils/router/routes.dart';
 
 class DasboardClientView extends StatelessWidget {
@@ -23,7 +23,8 @@ class DasboardClientView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const CircleAvatar(radius: 50),
+            if (client.user?.avatar != null)
+              CircularUserPhoto(imageUrl: client.user!.avatar!),
             const SizedBox(height: 10),
             Text("${client.user!.firstName!} ${client.user!.lastName!}",
                 style: Theme.of(context).textTheme.titleLarge),
@@ -33,23 +34,23 @@ class DasboardClientView extends StatelessWidget {
                     .bodyMedium!
                     .copyWith(color: Colors.grey[600])),
             const SizedBox(height: 10),
-            const Row(
-              spacing: 10,
-              children: [
-                Expanded(
-                    child: BasicCardCustom(
-                  title: "Products",
-                  subtitle: "15",
-                  icon: Icons.production_quantity_limits,
-                )),
-                Expanded(
-                    child: BasicCardCustom(
-                  title: "Orders",
-                  subtitle: "12",
-                  icon: Icons.production_quantity_limits,
-                ))
-              ],
-            ),
+            // const Row(
+            //   spacing: 10,
+            //   children: [
+            //     Expanded(
+            //         child: BasicCardCustom(
+            //       title: "Products",
+            //       subtitle: "15",
+            //       icon: Icons.production_quantity_limits,
+            //     )),
+            //     Expanded(
+            //         child: BasicCardCustom(
+            //       title: "Orders",
+            //       subtitle: "12",
+            //       icon: Icons.production_quantity_limits,
+            //     ))
+            //   ],
+            // ),
             // Do action (Publish products, Make a request)
             const SizedBox(height: 10),
             GridView(
@@ -65,18 +66,18 @@ class DasboardClientView extends StatelessWidget {
                 _buildServiceItem(
                   context: context,
                   title: "Products",
-                  subtitle: "Publish products",
+                  subtitle: "Publier un produit",
                   icon: Icons.production_quantity_limits,
                   onTap: () =>
                       context.pushNamed(Routes.chooseTypePublication.name),
                 ),
-                _buildServiceItem(
-                  context: context,
-                  title: "Buy products",
-                  subtitle: "Make a request",
-                  icon: Icons.request_page_outlined,
-                  onTap: () => showDialogChooseMethodScan(context),
-                ),
+                // _buildServiceItem(
+                //   context: context,
+                //   title: "Buy products",
+                //   subtitle: "Make a request",
+                //   icon: Icons.request_page_outlined,
+                //   onTap: () => showDialogChooseMethodScan(context),
+                // ),
               ],
             )
           ],

@@ -17,7 +17,7 @@ class ClientCubit extends Cubit<ClientState> {
     emit(state.copyWith(status: Status.loading));
     final result = await searchClientsUsecase(
         SearchCriteriaListParams(searchCriteriaList: [
-      SearchCriteria(filterKey: "phone", value: phone, operation: "cn"),
+      SearchCriteria(filterKey: "username", value: phone, operation: "cn"),
     ], dataOption: "all"));
     result.fold(
       (failure) => emit(

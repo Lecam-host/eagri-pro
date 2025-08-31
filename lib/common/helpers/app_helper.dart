@@ -205,7 +205,7 @@ class AppHelper {
         )
       ],
       sourcePath: image.path,
-      cropStyle: CropStyle.rectangle,
+      //  cropStyle: CropStyle.rectangle,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
     );
     if (croppedImage == null) {

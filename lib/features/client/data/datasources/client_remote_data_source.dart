@@ -19,7 +19,7 @@ class ClientRemoteDataSourceImpl implements ClientRemoteDataSource {
       {PaginateQueries? paginateQueries}) async {
     try {
       final response = await httpHelper.post(
-          '${ConstantUrl.msSecurity}/users/search?',
+          '${ConstantUrl.msSecurity}/users/search',
           data: params.toJson(),
           queryParameters: paginateQueries?.toJson());
       return (response.data["data"]['items'] as List)
